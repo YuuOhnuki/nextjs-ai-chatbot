@@ -1,6 +1,6 @@
 import { compare } from "bcrypt-ts";
-import NextAuth, { type DefaultSession } from "next-auth";
-import type { DefaultJWT } from "next-auth/jwt";
+import NextAuth, { type DefaultSession, type Account, type Session } from "next-auth";
+import type { DefaultJWT, JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
@@ -111,7 +111,7 @@ export const {
 
       return token;
     },
-    session({ session, token, account }) {
+    session: ({ session, token, account }: { session: Session; token: JWT; account?: Account | null }) => {
       if (session.user) {
         session.user.id = token.id;
         session.user.type = token.type;
