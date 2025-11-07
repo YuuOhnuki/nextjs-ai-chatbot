@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import { chatModels } from "@/lib/ai/models";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { CheckCircleFillIcon, ChevronDownIcon } from "./icons";
 
@@ -29,6 +30,7 @@ export function ModelSelector({
 
   const userType = session.user.type;
   const { availableChatModelIds } = entitlementsByUserType[userType];
+  const { t } = useTranslation();
 
   const availableChatModels = chatModels.filter((chatModel) =>
     availableChatModelIds.includes(chatModel.id)
@@ -56,7 +58,7 @@ export function ModelSelector({
           data-testid="model-selector"
           variant="outline"
         >
-          {selectedChatModel?.name}
+          {selectedChatModel ? t(selectedChatModel.nameKey) : ""}
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
@@ -87,9 +89,9 @@ export function ModelSelector({
                 type="button"
               >
                 <div className="flex flex-col items-start gap-1">
-                  <div className="text-sm sm:text-base">{chatModel.name}</div>
+                  <div className="text-sm sm:text-base">{t(chatModel.nameKey)}</div>
                   <div className="line-clamp-2 text-muted-foreground text-xs">
-                    {chatModel.description}
+                    {t(chatModel.description)}
                   </div>
                 </div>
 
