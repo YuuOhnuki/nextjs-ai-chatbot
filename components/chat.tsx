@@ -242,6 +242,7 @@ export function Chat({
       <Artifact
         attachments={attachments}
         chatId={id}
+        handleToolSelect={handleToolSelect}
         input={input}
         isReadonly={isReadonly}
         messages={messages}
