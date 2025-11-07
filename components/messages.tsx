@@ -20,8 +20,6 @@ type MessagesProps = {
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   isArtifactVisible: boolean;
-  selectedModelId: string;
-  session: any;
 };
 
 function PureMessages({
@@ -32,8 +30,6 @@ function PureMessages({
   setMessages,
   regenerate,
   isReadonly,
-  selectedModelId,
-  session,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -84,7 +80,6 @@ function PureMessages({
               requiresScrollPadding={
                 hasSentMessage && index === messages.length - 1
               }
-              session={session}
               setMessages={setMessages}
               vote={
                 votes
@@ -95,7 +90,9 @@ function PureMessages({
           ))}
 
           <AnimatePresence mode="wait">
-            {status === "submitted" && messages.length === 0 && <ThinkingMessage key="thinking" />}
+            {status === "submitted" && messages.length === 0 && (
+              <ThinkingMessage key="thinking" />
+            )}
           </AnimatePresence>
 
           <div

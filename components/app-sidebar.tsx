@@ -8,7 +8,10 @@ import { toast } from "sonner";
 import { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
 import { PlusIcon, TrashIcon } from "@/components/icons";
-import { SidebarHistory, getChatHistoryPaginationKey } from "@/components/sidebar-history";
+import {
+  getChatHistoryPaginationKey,
+  SidebarHistory,
+} from "@/components/sidebar-history";
 import { SidebarUserNav } from "@/components/sidebar-user-nav";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +22,6 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   AlertDialog,
@@ -31,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -120,7 +123,10 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
       </Sidebar>
 
-      <AlertDialog onOpenChange={setShowDeleteAllDialog} open={showDeleteAllDialog}>
+      <AlertDialog
+        onOpenChange={setShowDeleteAllDialog}
+        open={showDeleteAllDialog}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("deleteAllChats")}</AlertDialogTitle>

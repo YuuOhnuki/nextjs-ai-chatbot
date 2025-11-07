@@ -1,19 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { SiGoogle, SiGithub } from "@icons-pack/react-simple-icons";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useTranslation } from "@/hooks/useTranslation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,17 +16,38 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface SettingsModalProps {
+type SettingsModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
+};
 
 export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useTranslation();
   const { data: session } = useSession();
-  const isOAuth = session?.account?.provider && session.account.provider !== "credentials";
+  const isOAuth =
+    session?.account?.provider && session.account.provider !== "credentials";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [memoryEnabled, setMemoryEnabled] = useState(true);
@@ -51,24 +63,44 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     const savedMemoryEnabled = localStorage.getItem("memoryEnabled");
     const savedMemoryPrompt = localStorage.getItem("memoryPrompt");
     const savedAboutMe = localStorage.getItem("aboutMe");
-    const savedResponseNotifications = localStorage.getItem("responseNotifications");
+    const savedResponseNotifications = localStorage.getItem(
+      "responseNotifications"
+    );
     const savedSoundNotifications = localStorage.getItem("soundNotifications");
     const savedAccentColor = localStorage.getItem("accentColor");
 
-    if (savedMemoryEnabled !== null) setMemoryEnabled(JSON.parse(savedMemoryEnabled));
-    if (savedMemoryPrompt) setMemoryPrompt(savedMemoryPrompt);
-    if (savedAboutMe) setAboutMe(savedAboutMe);
-    if (savedResponseNotifications !== null) setResponseNotifications(JSON.parse(savedResponseNotifications));
-    if (savedSoundNotifications !== null) setSoundNotifications(JSON.parse(savedSoundNotifications));
-    if (savedAccentColor) setAccentColor(savedAccentColor);
+    if (savedMemoryEnabled !== null) {
+      setMemoryEnabled(JSON.parse(savedMemoryEnabled));
+    }
+    if (savedMemoryPrompt) {
+      setMemoryPrompt(savedMemoryPrompt);
+    }
+    if (savedAboutMe) {
+      setAboutMe(savedAboutMe);
+    }
+    if (savedResponseNotifications !== null) {
+      setResponseNotifications(JSON.parse(savedResponseNotifications));
+    }
+    if (savedSoundNotifications !== null) {
+      setSoundNotifications(JSON.parse(savedSoundNotifications));
+    }
+    if (savedAccentColor) {
+      setAccentColor(savedAccentColor);
+    }
   }, []);
 
   const handleSave = () => {
     localStorage.setItem("memoryEnabled", JSON.stringify(memoryEnabled));
     localStorage.setItem("memoryPrompt", memoryPrompt);
     localStorage.setItem("aboutMe", aboutMe);
-    localStorage.setItem("responseNotifications", JSON.stringify(responseNotifications));
-    localStorage.setItem("soundNotifications", JSON.stringify(soundNotifications));
+    localStorage.setItem(
+      "responseNotifications",
+      JSON.stringify(responseNotifications)
+    );
+    localStorage.setItem(
+      "soundNotifications",
+      JSON.stringify(soundNotifications)
+    );
     localStorage.setItem("accentColor", accentColor);
     toast.success("Settings saved successfully");
     onOpenChange(false);
@@ -86,7 +118,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
       } else {
         toast.error("Failed to delete account");
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("An error occurred while deleting account");
     }
     setShowDeleteDialog(false);
@@ -94,27 +126,31 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <Dialog onOpenChange={onOpenChange} open={open}>
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("settings")}</DialogTitle>
           </DialogHeader>
 
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+          <Tabs className="w-full" defaultValue="general">
+            <TabsList className="mb-6 grid w-full grid-cols-4">
               <TabsTrigger value="general">{t("general")}</TabsTrigger>
-              <TabsTrigger value="notifications">{t("notifications")}</TabsTrigger>
-              <TabsTrigger value="customization">{t("customization")}</TabsTrigger>
+              <TabsTrigger value="notifications">
+                {t("notifications")}
+              </TabsTrigger>
+              <TabsTrigger value="customization">
+                {t("customization")}
+              </TabsTrigger>
               <TabsTrigger value="account">{t("account")}</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general" className="space-y-6">
+            <TabsContent className="space-y-6" value="general">
               <div>
-                <Label htmlFor="appearance" className="text-base font-medium">
+                <Label className="font-medium text-base" htmlFor="appearance">
                   {t("appearance")}
                 </Label>
-                <Select value={theme} onValueChange={setTheme}>
-                  <SelectTrigger className="w-full mt-2">
+                <Select onValueChange={setTheme} value={theme}>
+                  <SelectTrigger className="mt-2 w-full">
                     <SelectValue placeholder={t("selectTheme")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -126,24 +162,24 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               </div>
 
               <div>
-                <Label htmlFor="accentColor" className="text-base font-medium">
+                <Label className="font-medium text-base" htmlFor="accentColor">
                   {t("accentColor")}
                 </Label>
                 <Input
+                  className="mt-2 h-10 w-full"
                   id="accentColor"
+                  onChange={(e) => setAccentColor(e.target.value)}
                   type="color"
                   value={accentColor}
-                  onChange={(e) => setAccentColor(e.target.value)}
-                  className="mt-2 w-full h-10"
                 />
               </div>
 
               <div>
-                <Label htmlFor="language" className="text-base font-medium">
+                <Label className="font-medium text-base" htmlFor="language">
                   {t("displayLanguage")}
                 </Label>
-                <Select value={language} onValueChange={setLanguage}>
-                  <SelectTrigger className="w-full mt-2">
+                <Select onValueChange={setLanguage} value={language}>
+                  <SelectTrigger className="mt-2 w-full">
                     <SelectValue placeholder={t("selectLanguage")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -156,71 +192,80 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               </div>
             </TabsContent>
 
-            <TabsContent value="notifications" className="space-y-6">
+            <TabsContent className="space-y-6" value="notifications">
               <div className="flex items-center justify-between">
-                <Label htmlFor="responseNotifications" className="text-base font-medium">
+                <Label
+                  className="font-medium text-base"
+                  htmlFor="responseNotifications"
+                >
                   {t("responseNotifications")}
                 </Label>
                 <Switch
-                  id="responseNotifications"
                   checked={responseNotifications}
+                  id="responseNotifications"
                   onCheckedChange={setResponseNotifications}
                 />
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="soundNotifications" className="text-base font-medium">
+                <Label
+                  className="font-medium text-base"
+                  htmlFor="soundNotifications"
+                >
                   {t("soundNotifications")}
                 </Label>
                 <Switch
-                  id="soundNotifications"
                   checked={soundNotifications}
+                  id="soundNotifications"
                   onCheckedChange={setSoundNotifications}
                 />
               </div>
             </TabsContent>
 
-            <TabsContent value="customization" className="space-y-6">
+            <TabsContent className="space-y-6" value="customization">
               <div className="flex items-center justify-between">
-                <Label htmlFor="memoryEnabled" className="text-base font-medium">
+                <Label
+                  className="font-medium text-base"
+                  htmlFor="memoryEnabled"
+                >
                   {t("memoryEnabled")}
                 </Label>
                 <Switch
-                  id="memoryEnabled"
                   checked={memoryEnabled}
+                  id="memoryEnabled"
                   onCheckedChange={setMemoryEnabled}
                 />
               </div>
 
               <div>
-                <Label htmlFor="memoryPrompt" className="text-base font-medium">
+                <Label className="font-medium text-base" htmlFor="memoryPrompt">
                   {t("memoryPrompt")}
                 </Label>
                 <Textarea
+                  className="mt-2 min-h-24"
                   id="memoryPrompt"
-                  value={memoryPrompt}
                   onChange={(e) => setMemoryPrompt(e.target.value)}
                   placeholder={t("memoryDescription")}
-                  className="mt-2 min-h-24"
+                  value={memoryPrompt}
                 />
               </div>
 
               <div>
-                <Label htmlFor="aboutMe" className="text-base font-medium">
+                <Label className="font-medium text-base" htmlFor="aboutMe">
                   {t("aboutMe")}
                 </Label>
                 <Textarea
+                  className="mt-2 min-h-24"
                   id="aboutMe"
-                  value={aboutMe}
                   onChange={(e) => setAboutMe(e.target.value)}
                   placeholder={t("aboutMeDescription")}
-                  className="mt-2 min-h-24"
+                  value={aboutMe}
                 />
               </div>
             </TabsContent>
 
-            <TabsContent value="account" className="space-y-6">
-            {isOAuth ? (
+            <TabsContent className="space-y-6" value="account">
+              {isOAuth ? (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -231,19 +276,31 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                       ) : (
                         <SiGoogle size={20} />
                       )}
-                      {session?.account?.provider === "google" ? t("googleAccount") : session?.account?.provider === "github" ? t("githubAccount") : t("oauthAccount")}
+                      {session?.account?.provider === "google"
+                        ? t("googleAccount")
+                        : session?.account?.provider === "github"
+                          ? t("githubAccount")
+                          : t("oauthAccount")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{t("emailLabel")}</span>
+                        <span className="font-medium text-sm">
+                          {t("emailLabel")}
+                        </span>
                         <span className="text-sm">{session?.user?.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{t("serviceLabel")}</span>
+                        <span className="font-medium text-sm">
+                          {t("serviceLabel")}
+                        </span>
                         <span className="text-sm">
-                          {session?.account?.provider === "google" ? "Google" : session?.account?.provider === "github" ? "GitHub" : "OAuth"}
+                          {session?.account?.provider === "google"
+                            ? "Google"
+                            : session?.account?.provider === "github"
+                              ? "GitHub"
+                              : "OAuth"}
                         </span>
                       </div>
                     </div>
@@ -252,43 +309,45 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               ) : (
                 <>
                   <div>
-                    <Label htmlFor="email" className="text-base font-medium">
+                    <Label className="font-medium text-base" htmlFor="email">
                       {t("email")}
                     </Label>
                     <Input
+                      className="mt-2"
                       id="email"
-                      type="email"
-                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("emailPlaceholder")}
-                      className="mt-2"
+                      type="email"
+                      value={email}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="password" className="text-base font-medium">
+                    <Label className="font-medium text-base" htmlFor="password">
                       {t("password")}
                     </Label>
                     <Input
+                      className="mt-2"
                       id="password"
-                      type="password"
-                      value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="mt-2"
+                      type="password"
+                      value={password}
                     />
                   </div>
                 </>
               )}
 
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium text-destructive mb-4">{t("deleteAccount")}</h3>
+              <div className="border-t pt-6">
+                <h3 className="mb-4 font-medium text-destructive text-lg">
+                  {t("deleteAccount")}
+                </h3>
                 <Button
-                  variant="destructive"
                   onClick={() => setShowDeleteDialog(true)}
+                  variant="destructive"
                 >
                   {t("deleteAccount")}
                 </Button>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-sm">
                   {t("deleteAccountWarning")}
                 </p>
               </div>
@@ -296,17 +355,15 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           </Tabs>
 
           <div className="mt-8 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button onClick={() => onOpenChange(false)} variant="outline">
               {t("cancel")}
             </Button>
-            <Button onClick={handleSave}>
-              {t("saveSettings")}
-            </Button>
+            <Button onClick={handleSave}>{t("saveSettings")}</Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog onOpenChange={setShowDeleteDialog} open={showDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>アカウント削除</AlertDialogTitle>
@@ -316,7 +373,9 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>キャンセル</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAccount}>削除</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteAccount}>
+              削除
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

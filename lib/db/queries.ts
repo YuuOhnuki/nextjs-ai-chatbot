@@ -59,10 +59,13 @@ export async function createUser(email: string, password?: string) {
   const hashedPassword = password ? generateHashedPassword(password) : null;
 
   try {
-    return await db.insert(user).values({ email, password: hashedPassword }).returning({
-      id: user.id,
-      email: user.email,
-    });
+    return await db
+      .insert(user)
+      .values({ email, password: hashedPassword })
+      .returning({
+        id: user.id,
+        email: user.email,
+      });
   } catch (_error) {
     throw new ChatSDKError("bad_request:database", "Failed to create user");
   }
@@ -146,7 +149,7 @@ export async function deleteAllChatsByUserId({ userId }: { userId: string }) {
       return { deletedCount: 0 };
     }
 
-    const chatIds = userChats.map(c => c.id);
+    const chatIds = userChats.map((c) => c.id);
 
     await db.delete(vote).where(inArray(vote.chatId, chatIds));
     await db.delete(message).where(inArray(message.chatId, chatIds));
@@ -575,7 +578,7 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
       .where(eq(stream.chatId, chatId))
       .orderBy(desc(stream.createdAt));
 
-    return streams.map(s => s.id);
+    return streams.map((s) => s.id);
   } catch (_error) {
     throw new ChatSDKError(
       "bad_request:database",
@@ -598,54 +601,67 @@ export async function createStreamId({
       createdAt: new Date(),
     });
   } catch (_error) {
-    throw new ChatSDKError("bad_request:database", "Failed to create stream id");
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to create stream id"
+    );
   }
 }
 
 export async function deleteUser(userId: string) {
   try {
     // Delete votes first
-    await db.delete(vote).where(
-      inArray(
-        vote.chatId,
-        db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
-      )
-    );
+    await db
+      .delete(vote)
+      .where(
+        inArray(
+          vote.chatId,
+          db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
+        )
+      );
 
     // Delete messages
-    await db.delete(message).where(
-      inArray(
-        message.chatId,
-        db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
-      )
-    );
+    await db
+      .delete(message)
+      .where(
+        inArray(
+          message.chatId,
+          db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
+        )
+      );
 
     // Delete deprecated votes
-    await db.delete(voteDeprecated).where(
-      inArray(
-        voteDeprecated.chatId,
-        db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
-      )
-    );
+    await db
+      .delete(voteDeprecated)
+      .where(
+        inArray(
+          voteDeprecated.chatId,
+          db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
+        )
+      );
 
     // Delete deprecated messages
-    await db.delete(messageDeprecated).where(
-      inArray(
-        messageDeprecated.chatId,
-        db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
-      )
-    );
+    await db
+      .delete(messageDeprecated)
+      .where(
+        inArray(
+          messageDeprecated.chatId,
+          db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
+        )
+      );
 
     // Delete chats
     await db.delete(chat).where(eq(chat.userId, userId));
 
     // Delete streams
-    await db.delete(stream).where(
-      inArray(
-        stream.chatId,
-        db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
-      )
-    );
+    await db
+      .delete(stream)
+      .where(
+        inArray(
+          stream.chatId,
+          db.select({ id: chat.id }).from(chat).where(eq(chat.userId, userId))
+        )
+      );
 
     // Finally delete the user
     await db.delete(user).where(eq(user.id, userId));

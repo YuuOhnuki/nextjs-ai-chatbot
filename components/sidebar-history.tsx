@@ -23,9 +23,9 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { Chat } from "@/lib/db/schema";
 import { fetcher } from "@/lib/utils";
-import { useTranslation } from "@/hooks/useTranslation";
 import { LoaderIcon } from "./icons";
 import { ChatItem } from "./sidebar-history-item";
 

@@ -1,9 +1,5 @@
 import { google } from "@ai-sdk/google";
-import {
-  customProvider,
-  extractReasoningMiddleware,
-  wrapLanguageModel,
-} from "ai";
+import { customProvider } from "ai";
 import { isTestEnvironment } from "../constants";
 
 export const myProvider = isTestEnvironment

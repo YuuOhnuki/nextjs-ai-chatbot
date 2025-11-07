@@ -3,8 +3,8 @@
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
-import type { ChatMessage } from "@/lib/types";
 import { useTranslation } from "@/hooks/useTranslation";
+import type { ChatMessage } from "@/lib/types";
 import { Suggestion } from "./elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
 
@@ -15,39 +15,62 @@ type DynamicSuggestedActionsProps = {
   messages: ChatMessage[];
 };
 
-function generateSuggestions(lastMessage: string, t: (key: string) => string): string[] {
+function generateSuggestions(
+  lastMessage: string,
+  t: (key: string) => string
+): string[] {
   const message = lastMessage.toLowerCase();
 
   // 質問が含まれている場合
-  if (message.includes('?') || message.includes('what') || message.includes('how') || message.includes('why') ||
-      message.includes('？') || message.includes('何') || message.includes('どう') || message.includes('なぜ')) {
+  if (
+    message.includes("?") ||
+    message.includes("what") ||
+    message.includes("how") ||
+    message.includes("why") ||
+    message.includes("？") ||
+    message.includes("何") ||
+    message.includes("どう") ||
+    message.includes("なぜ")
+  ) {
     return [
       t("suggestionYes"),
       t("suggestionNo"),
       t("suggestionMoreDetails"),
-      t("suggestionThankYou")
+      t("suggestionThankYou"),
     ];
   }
 
   // 提案や提案が含まれている場合
-  if (message.includes('recommend') || message.includes('suggest') || message.includes('try') ||
-      message.includes('提案') || message.includes('おすすめ') || message.includes('試して')) {
+  if (
+    message.includes("recommend") ||
+    message.includes("suggest") ||
+    message.includes("try") ||
+    message.includes("提案") ||
+    message.includes("おすすめ") ||
+    message.includes("試して")
+  ) {
     return [
       t("suggestionSoundsGood"),
       t("suggestionMaybeLater"),
       t("suggestionTellMeMore"),
-      t("suggestionThankYou")
+      t("suggestionThankYou"),
     ];
   }
 
   // 説明や情報提供の場合
-  if (message.includes('is') || message.includes('are') || message.includes('means') ||
-      message.includes('です') || message.includes('ます') || message.includes('でした')) {
+  if (
+    message.includes("is") ||
+    message.includes("are") ||
+    message.includes("means") ||
+    message.includes("です") ||
+    message.includes("ます") ||
+    message.includes("でした")
+  ) {
     return [
       t("suggestionUnderstood"),
       t("suggestionCanYouExplain"),
       t("suggestionGiveExample"),
-      t("suggestionThankYou")
+      t("suggestionThankYou"),
     ];
   }
 
@@ -56,36 +79,44 @@ function generateSuggestions(lastMessage: string, t: (key: string) => string): s
     t("suggestionThankYou"),
     t("suggestionCanYouExplain"),
     t("suggestionTellMeMore"),
-    t("suggestionGotIt")
+    t("suggestionGotIt"),
   ];
 }
 
 function PureDynamicSuggestedActions({
   chatId,
   sendMessage,
-  messages
+  messages,
 }: DynamicSuggestedActionsProps) {
   const { t } = useTranslation();
 
   const suggestions = useMemo(() => {
-    if (messages.length === 0) return [];
+    if (messages.length === 0) {
+      return [];
+    }
 
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role !== 'assistant') return [];
+    const lastMessage = messages.at(-1);
+    if (lastMessage.role !== "assistant") {
+      return [];
+    }
 
     // 最後のアシスタントメッセージからテキストを取得
     const lastMessageText = lastMessage.parts
-      .filter(part => part.type === 'text')
-      .map(part => part.text)
-      .join(' ')
+      .filter((part) => part.type === "text")
+      .map((part) => part.text)
+      .join(" ")
       .trim();
 
-    if (!lastMessageText) return [];
+    if (!lastMessageText) {
+      return [];
+    }
 
     return generateSuggestions(lastMessageText, t);
   }, [messages, t]);
 
-  if (suggestions.length === 0) return null;
+  if (suggestions.length === 0) {
+    return null;
+  }
 
   return (
     <div
@@ -95,14 +126,14 @@ function PureDynamicSuggestedActions({
       {suggestions.map((suggestedAction, index) => (
         <motion.div
           animate={{ opacity: 1, x: 0 }}
+          className="flex-shrink-0"
           exit={{ opacity: 0, x: -20 }}
           initial={{ opacity: 0, x: 20 }}
           key={suggestedAction}
           transition={{ delay: 0.05 * index }}
-          className="flex-shrink-0"
         >
           <Suggestion
-            className="h-auto whitespace-normal p-3 text-left min-w-[200px]"
+            className="h-auto min-w-[200px] whitespace-normal p-3 text-left"
             onClick={(suggestion) => {
               window.history.replaceState({}, "", `/chat/${chatId}`);
               sendMessage({

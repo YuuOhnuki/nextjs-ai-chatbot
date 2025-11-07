@@ -57,7 +57,7 @@ export function VisibilitySelector({
 
   const selectedVisibility = useMemo(
     () => visibilities.find((visibility) => visibility.id === visibilityType),
-    [visibilityType]
+    [visibilityType, visibilities.find]
   );
 
   return (

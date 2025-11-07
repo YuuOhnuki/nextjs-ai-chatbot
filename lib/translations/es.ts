@@ -9,7 +9,8 @@ export const es = {
   dontHaveAccount: "¿No tienes una cuenta?",
   alreadyHaveAccount: "¿Ya tienes una cuenta?",
   orContinueWith: "O continuar con",
-  useYourEmailAndPassword: "Usa tu correo electrónico y contraseña para iniciar sesión",
+  useYourEmailAndPassword:
+    "Usa tu correo electrónico y contraseña para iniciar sesión",
 
   // Auth Messages
   invalidCredentials: "¡Credenciales inválidas!",
@@ -20,7 +21,8 @@ export const es = {
   forFree: " gratis.",
 
   // Register
-  createAccountWithEmailPassword: "Crear una cuenta con tu correo electrónico y contraseña",
+  createAccountWithEmailPassword:
+    "Crear una cuenta con tu correo electrónico y contraseña",
   signInInstead: "Iniciar sesión en su lugar.",
 
   // Settings
@@ -56,7 +58,8 @@ export const es = {
   // Account
   accountInfo: "Información de la Cuenta",
   deleteAccount: "Eliminar Cuenta",
-  deleteAccountWarning: "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y quitará tus datos de nuestros servidores.",
+  deleteAccountWarning:
+    "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y quitará tus datos de nuestros servidores.",
 
   // Account Card
   emailLabel: "Dirección de Correo:",
@@ -72,8 +75,10 @@ export const es = {
 
   // Chat Input
   sendMessagePlaceholder: "Enviar un mensaje...",
-  waitForModelResponse: "¡Por favor espera a que el modelo termine su respuesta!",
-  modelDescriptionAdvanced: "Modelo multimodal avanzado con capacidades de visión y texto",
+  waitForModelResponse:
+    "¡Por favor espera a que el modelo termine su respuesta!",
+  modelDescriptionAdvanced:
+    "Modelo multimodal avanzado con capacidades de visión y texto",
   modelDescriptionFast: "Modelo rápido y eficiente para respuestas rápidas",
 
   // Message
@@ -104,13 +109,15 @@ export const es = {
   last30Days: "Últimos 30 días",
   olderThanLastMonth: "Más antiguo que el mes pasado",
   loginToSave: "¡Inicia sesión para guardar y revisar chats anteriores!",
-  conversationsWillAppear: "¡Tus conversaciones aparecerán aquí una vez que empieces a chatear!",
+  conversationsWillAppear:
+    "¡Tus conversaciones aparecerán aquí una vez que empieces a chatear!",
   reachedEndOfHistory: "Has llegado al final de tu historial de chat.",
   loadingChats: "Cargando Chats...",
 
   // Alerts
   activateAIGateway: "Activar AI Gateway",
-  activateAIGatewayDescription: "Esta aplicación requiere que el propietario active Vercel AI Gateway.",
+  activateAIGatewayDescription:
+    "Esta aplicación requiere que el propietario active Vercel AI Gateway.",
   activate: "Activar",
 
   // Suggested Actions
@@ -124,11 +131,13 @@ export const es = {
 
   // Sidebar
   deleteAllChats: "¿Eliminar todos los chats?",
-  deleteAllChatsDescription: "Esta acción no se puede deshacer. Esto eliminará permanentemente todos tus chats y los quitará de nuestros servidores.",
+  deleteAllChatsDescription:
+    "Esta acción no se puede deshacer. Esto eliminará permanentemente todos tus chats y los quitará de nuestros servidores.",
   deleteAll: "Eliminar Todo",
 
   // Toasts
-  checkingAuthStatus: "¡Verificando el estado de autenticación, inténtalo de nuevo!",
+  checkingAuthStatus:
+    "¡Verificando el estado de autenticación, inténtalo de nuevo!",
 
   // Chat Messages
   thinking: "Pensando...",
@@ -150,9 +159,12 @@ export const es = {
   cancel: "Cancelar",
 
   // Error messages
-  aiOverloaded: "El modelo de IA está actualmente sobrecargado. Por favor, inténtalo de nuevo en unos momentos.",
-  rateLimitExceeded: "Límite de tasa excedido. Por favor, espera un momento antes de intentarlo de nuevo.",
-  unexpectedError: "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.",
+  aiOverloaded:
+    "El modelo de IA está actualmente sobrecargado. Por favor, inténtalo de nuevo en unos momentos.",
+  rateLimitExceeded:
+    "Límite de tasa excedido. Por favor, espera un momento antes de intentarlo de nuevo.",
+  unexpectedError:
+    "Ocurrió un error inesperado. Por favor, inténtalo de nuevo.",
   somethingWrong: "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
 
   // Tools

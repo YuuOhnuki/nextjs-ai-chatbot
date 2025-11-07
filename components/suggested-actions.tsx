@@ -3,8 +3,8 @@
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "framer-motion";
 import { memo } from "react";
-import type { ChatMessage } from "@/lib/types";
 import { useTranslation } from "@/hooks/useTranslation";
+import type { ChatMessage } from "@/lib/types";
 import { Suggestion } from "./elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
 
@@ -32,14 +32,14 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
           animate={{ opacity: 1, x: 0 }}
+          className="flex-shrink-0"
           exit={{ opacity: 0, x: -20 }}
           initial={{ opacity: 0, x: 20 }}
           key={suggestedAction}
           transition={{ delay: 0.05 * index }}
-          className="flex-shrink-0"
         >
           <Suggestion
-            className="h-auto whitespace-normal p-3 text-left min-w-[200px]"
+            className="h-auto min-w-[200px] whitespace-normal p-3 text-left"
             onClick={(suggestion) => {
               window.history.replaceState({}, "", `/chat/${chatId}`);
               sendMessage({

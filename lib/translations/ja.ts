@@ -20,7 +20,8 @@ export const ja = {
   forFree: " 無料で。",
 
   // Register
-  createAccountWithEmailPassword: "メールアドレスとパスワードでアカウントを作成",
+  createAccountWithEmailPassword:
+    "メールアドレスとパスワードでアカウントを作成",
   signInInstead: "代わりにサインイン。",
 
   // Settings
@@ -57,7 +58,8 @@ export const ja = {
   // Account tab
   accountInfo: "アカウント情報",
   deleteAccount: "アカウント削除",
-  deleteAccountWarning: "この操作は取り消せません。アカウントを削除し、サーバーからデータを削除します。",
+  deleteAccountWarning:
+    "この操作は取り消せません。アカウントを削除し、サーバーからデータを削除します。",
 
   // Account Card
   emailLabel: "メールアドレス:",
@@ -75,17 +77,19 @@ export const ja = {
   continueWithGoogle: "Googleで続行",
   continueWithGitHub: "GitHubで続行",
 
-    // Chat Input
+  // Chat Input
   sendMessagePlaceholder: "メッセージを送信...",
   waitForModelResponse: "モデルの応答が完了するまでお待ちください！",
-  modelDescriptionAdvanced: "ビジョンとテキスト機能を備えた高度なマルチモーダルモデル",
+  modelDescriptionAdvanced:
+    "ビジョンとテキスト機能を備えた高度なマルチモーダルモデル",
   modelDescriptionFast: "迅速な応答のための高速で効率的なモデル",
 
   // Visibility
   private: "プライベート",
   privateDescription: "あなただけがこのチャットにアクセスできます",
   public: "パブリック",
-  publicDescription: "リンクを持っている人なら誰でもこのチャットにアクセスできます",
+  publicDescription:
+    "リンクを持っている人なら誰でもこのチャットにアクセスできます",
 
   // Version Footer
   viewingPreviousVersion: "以前のバージョンを表示しています",
@@ -115,7 +119,8 @@ export const ja = {
 
   // Alerts
   activateAIGateway: "AI Gateway を有効化",
-  activateAIGatewayDescription: "このアプリケーションではオーナーが Vercel AI Gateway を有効化する必要があります。",
+  activateAIGatewayDescription:
+    "このアプリケーションではオーナーが Vercel AI Gateway を有効化する必要があります。",
   activate: "有効化",
 
   // Suggested Actions
@@ -129,11 +134,13 @@ export const ja = {
 
   // Sidebar
   deleteAllChats: "すべてのチャットを削除しますか？",
-  deleteAllChatsDescription: "この操作は取り消せません。すべてのチャットを永久に削除し、サーバーから削除します。",
+  deleteAllChatsDescription:
+    "この操作は取り消せません。すべてのチャットを永久に削除し、サーバーから削除します。",
   deleteAll: "すべて削除",
 
   // Toasts
-  checkingAuthStatus: "認証ステータスを確認しています、もう一度お試しください！",
+  checkingAuthStatus:
+    "認証ステータスを確認しています、もう一度お試しください！",
 
   // Sidebar History
   today: "今日",
@@ -146,7 +153,8 @@ export const ja = {
   reachedEndOfHistory: "チャット履歴の最後に到達しました。",
   loadingChats: "チャットを読み込み中...",
   areYouAbsolutelySure: "本当に実行しますか？",
-  deleteChatDescription: "この操作は取り消せません。チャットを永久に削除し、サーバーから削除します。",
+  deleteChatDescription:
+    "この操作は取り消せません。チャットを永久に削除し、サーバーから削除します。",
   continue: "続行",
 
   // Chat Messages
@@ -166,8 +174,10 @@ export const ja = {
   suggestionGotIt: "了解しました",
 
   // Error messages
-  aiOverloaded: "AIモデルが現在過負荷です。しばらくしてからもう一度お試しください。",
-  rateLimitExceeded: "レート制限を超えました。少し待ってからもう一度お試しください。",
+  aiOverloaded:
+    "AIモデルが現在過負荷です。しばらくしてからもう一度お試しください。",
+  rateLimitExceeded:
+    "レート制限を超えました。少し待ってからもう一度お試しください。",
   unexpectedError: "予期しないエラーが発生しました。もう一度お試しください。",
   somethingWrong: "何か問題が発生しました。後でもう一度お試しください。",
 

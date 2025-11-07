@@ -1,17 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { useTranslation } from "@/hooks/useTranslation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +15,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -50,92 +56,95 @@ export default function SettingsPage() {
       } else {
         toast.error("Failed to delete account");
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("An error occurred while deleting account");
     }
     setShowDeleteDialog(false);
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-2xl">
-      <div className="bg-card rounded-lg shadow-lg p-6 md:p-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">{t("settings")}</h1>
+    <div className="container mx-auto max-w-2xl px-4 py-8">
+      <div className="rounded-lg bg-card p-6 shadow-lg md:p-8">
+        <h1 className="mb-8 text-center font-bold text-3xl">{t("settings")}</h1>
 
-        <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+        <Tabs className="w-full" defaultValue="account">
+          <TabsList className="mb-6 grid w-full grid-cols-3">
             <TabsTrigger value="account">{t("account")}</TabsTrigger>
             <TabsTrigger value="memory">{t("memory")}</TabsTrigger>
             <TabsTrigger value="theme">{t("theme")}</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account" className="space-y-6">
+          <TabsContent className="space-y-6" value="account">
             <div>
-              <Label htmlFor="email" className="text-base font-medium">
+              <Label className="font-medium text-base" htmlFor="email">
                 {t("email")}
               </Label>
               <Input
+                className="mt-2"
                 id="email"
-                type="email"
-                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="mt-2"
+                type="email"
+                value={email}
               />
             </div>
             <div>
-              <Label htmlFor="password" className="text-base font-medium">
+              <Label className="font-medium text-base" htmlFor="password">
                 {t("password")}
               </Label>
               <Input
+                className="mt-2"
                 id="password"
-                type="password"
-                value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="mt-2"
+                type="password"
+                value={password}
               />
             </div>
             {session?.user?.type === "regular" && (
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-medium text-destructive mb-4">Danger Zone</h3>
+              <div className="border-t pt-6">
+                <h3 className="mb-4 font-medium text-destructive text-lg">
+                  Danger Zone
+                </h3>
                 <Button
-                  variant="destructive"
                   onClick={() => setShowDeleteDialog(true)}
+                  variant="destructive"
                 >
                   Delete Account
                 </Button>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This action cannot be undone. This will permanently delete your account and all associated data.
+                <p className="mt-2 text-muted-foreground text-sm">
+                  This action cannot be undone. This will permanently delete
+                  your account and all associated data.
                 </p>
               </div>
             )}
           </TabsContent>
 
-          <TabsContent value="memory" className="space-y-6">
+          <TabsContent className="space-y-6" value="memory">
             <div>
-              <Label htmlFor="memory" className="text-base font-medium">
+              <Label className="font-medium text-base" htmlFor="memory">
                 {t("commonPromptMemory")}
               </Label>
               <Textarea
+                className="mt-2 min-h-32"
                 id="memory"
-                value={memory}
                 onChange={(e) => setMemory(e.target.value)}
                 placeholder={t("memoryDescription")}
-                className="mt-2 min-h-32"
+                value={memory}
               />
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="mt-2 text-muted-foreground text-sm">
                 {t("memoryDescription")}
               </p>
             </div>
           </TabsContent>
 
-          <TabsContent value="theme" className="space-y-6">
+          <TabsContent className="space-y-6" value="theme">
             <div>
-              <Label htmlFor="language" className="text-base font-medium">
+              <Label className="font-medium text-base" htmlFor="language">
                 {t("displayLanguage")}
               </Label>
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-full mt-2">
+              <Select onValueChange={setLanguage} value={language}>
+                <SelectTrigger className="mt-2 w-full">
                   <SelectValue placeholder={t("selectLanguage")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -146,11 +155,11 @@ export default function SettingsPage() {
             </div>
 
             <div>
-              <Label htmlFor="theme" className="text-base font-medium">
+              <Label className="font-medium text-base" htmlFor="theme">
                 {t("themeColor")}
               </Label>
-              <Select value={theme} onValueChange={setTheme}>
-                <SelectTrigger className="w-full mt-2">
+              <Select onValueChange={setTheme} value={theme}>
+                <SelectTrigger className="mt-2 w-full">
                   <SelectValue placeholder={t("selectTheme")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,17 +179,20 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <AlertDialog onOpenChange={setShowDeleteDialog} open={showDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Account</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAccount}>Delete Account</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteAccount}>
+              Delete Account
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

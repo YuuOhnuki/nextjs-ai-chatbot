@@ -1,22 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { memo } from "react";
 import { useWindowSize } from "usehooks-ts";
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, VercelIcon } from "./icons";
+import { useTranslation } from "@/hooks/use-translation";
+import { PlusIcon } from "./icons";
 import { useSidebar } from "./ui/sidebar";
-import { useTranslation } from "@/hooks/useTranslation";
 
-function PureChatHeader({
-  chatId,
-  isReadonly,
-}: {
-  chatId: string;
-  isReadonly: boolean;
-}) {
+function PureChatHeader() {
   const router = useRouter();
   const { open } = useSidebar();
   const { t } = useTranslation();
@@ -40,14 +33,8 @@ function PureChatHeader({
           <span className="md:sr-only">{t("newChat")}</span>
         </Button>
       )}
-
     </header>
   );
 }
 
-export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-  return (
-    prevProps.chatId === nextProps.chatId &&
-    prevProps.isReadonly === nextProps.isReadonly
-  );
-});
+export const ChatHeader = memo(PureChatHeader);

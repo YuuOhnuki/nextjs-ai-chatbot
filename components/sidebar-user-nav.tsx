@@ -1,17 +1,15 @@
 "use client";
 
-import { ChevronUp, Settings, LogOut } from "lucide-react";
+import { ChevronUp, LogOut, Settings } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import type { User } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,16 +17,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useTranslation } from "@/hooks/use-translation";
 import { guestRegex } from "@/lib/constants";
 import { LoaderIcon } from "./icons";
 import { SettingsModal } from "./settings-modal";
 import { toast } from "./toast";
-import { useTranslation } from "@/hooks/useTranslation";
 
 export function SidebarUserNav({ user }: { user: User }) {
   const router = useRouter();
   const { data, status } = useSession();
-  const { setTheme, resolvedTheme } = useTheme();
   const { t } = useTranslation();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -61,7 +58,10 @@ export function SidebarUserNav({ user }: { user: User }) {
                     alt={user.email ?? "User Avatar"}
                     className="rounded-full"
                     height={24}
-                    src={data?.user?.image || `https://avatar.vercel.sh/${user.email}`}
+                    src={
+                      data?.user?.image ||
+                      `https://avatar.vercel.sh/${user.email}`
+                    }
                     width={24}
                   />
                   <span className="truncate" data-testid="user-email">
@@ -77,12 +77,12 @@ export function SidebarUserNav({ user }: { user: User }) {
               side="top"
             >
               {!isGuest && (
-                <div className="px-2 py-1.5 text-sm text-muted-foreground border-b">
+                <div className="border-b px-2 py-1.5 text-muted-foreground text-sm">
                   {user?.email}
                 </div>
               )}
               <DropdownMenuItem
-                className="cursor-pointer flex items-center gap-2 px-3 py-2"
+                className="flex cursor-pointer items-center gap-2 px-3 py-2"
                 data-testid="user-nav-item-settings"
                 onSelect={() => setSettingsOpen(true)}
               >
@@ -91,7 +91,7 @@ export function SidebarUserNav({ user }: { user: User }) {
               </DropdownMenuItem>
               <DropdownMenuItem asChild data-testid="user-nav-item-auth">
                 <button
-                  className="w-full cursor-pointer flex items-center gap-2 px-3 py-2"
+                  className="flex w-full cursor-pointer items-center gap-2 px-3 py-2"
                   onClick={() => {
                     if (status === "loading") {
                       toast({
@@ -120,7 +120,7 @@ export function SidebarUserNav({ user }: { user: User }) {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <SettingsModal onOpenChange={setSettingsOpen} open={settingsOpen} />
     </>
   );
 }

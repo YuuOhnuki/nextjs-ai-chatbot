@@ -1,9 +1,10 @@
 "use client";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
-import { BrainIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { memo, useEffect, useState } from "react";
+import { BrainIcon } from "lucide-react";
+import { memo, useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { cn, sanitizeText } from "@/lib/utils";
@@ -19,7 +20,6 @@ import {
   ToolInput,
   ToolOutput,
 } from "./elements/tool";
-import { useTranslation } from "@/hooks/useTranslation";
 import { MessageActions } from "./message-actions";
 import { MessageEditor } from "./message-editor";
 import { MessageReasoning } from "./message-reasoning";
@@ -35,7 +35,6 @@ const PurePreviewMessage = ({
   regenerate,
   isReadonly,
   requiresScrollPadding,
-  session,
 }: {
   chatId: string;
   message: ChatMessage;
@@ -45,7 +44,6 @@ const PurePreviewMessage = ({
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   requiresScrollPadding: boolean;
-  session: any;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
 
@@ -335,17 +333,29 @@ export const ThinkingMessage = () => {
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 className="size-2 rounded-full bg-primary/60"
-                transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 0,
+                }}
               />
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 className="size-2 rounded-full bg-primary/60"
-                transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 0.2,
+                }}
               />
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 className="size-2 rounded-full bg-primary/60"
-                transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 0.4,
+                }}
               />
             </div>
             <span className="text-muted-foreground text-sm">
@@ -355,12 +365,11 @@ export const ThinkingMessage = () => {
 
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
-            className="h-4 w-32 rounded bg-muted animate-pulse"
-            transition={{ duration: 2, repeat: Infinity }}
+            className="h-4 w-32 animate-pulse rounded bg-muted"
+            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
           />
         </div>
       </div>
     </motion.div>
   );
 };
-

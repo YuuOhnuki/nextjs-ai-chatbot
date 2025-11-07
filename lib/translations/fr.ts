@@ -9,7 +9,8 @@ export const fr = {
   dontHaveAccount: "Vous n'avez pas de compte ?",
   alreadyHaveAccount: "Vous avez déjà un compte ?",
   orContinueWith: "Ou continuer avec",
-  useYourEmailAndPassword: "Utilisez votre e-mail et mot de passe pour vous connecter",
+  useYourEmailAndPassword:
+    "Utilisez votre e-mail et mot de passe pour vous connecter",
 
   // Auth Messages
   invalidCredentials: "Identifiants invalides !",
@@ -20,7 +21,8 @@ export const fr = {
   forFree: " gratuitement.",
 
   // Register
-  createAccountWithEmailPassword: "Créer un compte avec votre e-mail et mot de passe",
+  createAccountWithEmailPassword:
+    "Créer un compte avec votre e-mail et mot de passe",
   signInInstead: "Se connecter à la place.",
 
   // Settings
@@ -54,7 +56,8 @@ export const fr = {
   // Account
   accountInfo: "Informations du Compte",
   deleteAccount: "Supprimer le Compte",
-  deleteAccountWarning: "Cette action ne peut pas être annulée. Cela supprimera définitivement votre compte et retirera vos données de nos serveurs.",
+  deleteAccountWarning:
+    "Cette action ne peut pas être annulée. Cela supprimera définitivement votre compte et retirera vos données de nos serveurs.",
 
   // Account Card
   emailLabel: "Adresse E-Mail:",
@@ -71,7 +74,8 @@ export const fr = {
   // Chat Input
   sendMessagePlaceholder: "Envoyer un message...",
   waitForModelResponse: "Veuillez attendre que le modèle termine sa réponse !",
-  modelDescriptionAdvanced: "Modèle multimodal avancé avec capacités de vision et de texte",
+  modelDescriptionAdvanced:
+    "Modèle multimodal avancé avec capacités de vision et de texte",
   modelDescriptionFast: "Modèle rapide et efficace pour des réponses rapides",
   english: "Anglais",
   spanish: "Espagnol",
@@ -101,14 +105,17 @@ export const fr = {
   last7Days: "7 derniers jours",
   last30Days: "30 derniers jours",
   olderThanLastMonth: "Plus ancien que le mois dernier",
-  loginToSave: "Connectez-vous pour sauvegarder et revoir les chats précédents !",
-  conversationsWillAppear: "Vos conversations apparaîtront ici une fois que vous commencerez à chatter !",
+  loginToSave:
+    "Connectez-vous pour sauvegarder et revoir les chats précédents !",
+  conversationsWillAppear:
+    "Vos conversations apparaîtront ici une fois que vous commencerez à chatter !",
   reachedEndOfHistory: "Vous avez atteint la fin de votre historique de chat.",
   loadingChats: "Chargement des Chats...",
 
   // Alerts
   activateAIGateway: "Activer AI Gateway",
-  activateAIGatewayDescription: "Cette application nécessite que le propriétaire active Vercel AI Gateway.",
+  activateAIGatewayDescription:
+    "Cette application nécessite que le propriétaire active Vercel AI Gateway.",
   activate: "Activer",
 
   // Suggested Actions
@@ -122,7 +129,8 @@ export const fr = {
 
   // Sidebar
   deleteAllChats: "Supprimer tous les chats ?",
-  deleteAllChatsDescription: "Cette action ne peut pas être annulée. Cela supprimera définitivement tous vos chats et les retirera de nos serveurs.",
+  deleteAllChatsDescription:
+    "Cette action ne peut pas être annulée. Cela supprimera définitivement tous vos chats et les retirera de nos serveurs.",
   deleteAll: "Tout Supprimer",
 
   // Toasts
@@ -148,10 +156,13 @@ export const fr = {
   cancel: "Annuler",
 
   // Error messages
-  aiOverloaded: "Le modèle d'IA est actuellement surchargé. Veuillez réessayer dans quelques instants.",
-  rateLimitExceeded: "Limite de débit dépassée. Veuillez patienter un instant avant de réessayer.",
+  aiOverloaded:
+    "Le modèle d'IA est actuellement surchargé. Veuillez réessayer dans quelques instants.",
+  rateLimitExceeded:
+    "Limite de débit dépassée. Veuillez patienter un instant avant de réessayer.",
   unexpectedError: "Une erreur inattendue s'est produite. Veuillez réessayer.",
-  somethingWrong: "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
+  somethingWrong:
+    "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
 
   // Tools
   toolWeather: "Météo",

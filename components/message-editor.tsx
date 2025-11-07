@@ -10,11 +10,11 @@ import {
   useState,
 } from "react";
 import { deleteTrailingMessages } from "@/app/(chat)/actions";
+import { useTranslation } from "@/hooks/use-translation";
 import type { ChatMessage } from "@/lib/types";
 import { getTextFromMessage } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { useTranslation } from "@/hooks/useTranslation";
 
 export type MessageEditorProps = {
   message: ChatMessage;
@@ -29,7 +29,6 @@ export function MessageEditor({
   setMessages,
   regenerate,
 }: MessageEditorProps) {
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [draftContent, setDraftContent] = useState<string>(
@@ -55,7 +54,7 @@ export function MessageEditor({
     adjustHeight();
   };
 
-  const { language, setLanguage, t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className="flex w-full flex-col gap-2">

@@ -1,9 +1,13 @@
 import { compare } from "bcrypt-ts";
-import NextAuth, { type DefaultSession, type Account, type Session } from "next-auth";
+import NextAuth, {
+  type Account,
+  type DefaultSession,
+  type Session,
+} from "next-auth";
 import type { DefaultJWT, JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import { DUMMY_PASSWORD } from "@/lib/constants";
 import { createGuestUser, createUser, getUser } from "@/lib/db/queries";
 import { authConfig } from "./auth.config";
@@ -79,8 +83,14 @@ export const {
         return { ...guestUser, type: "guest" };
       },
     }),
- Google({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }),
-    GitHub({ clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    }),
   ],
   callbacks: {
     jwt: async ({ token, user, account }) => {
@@ -111,7 +121,15 @@ export const {
 
       return token;
     },
-    session: ({ session, token, account }: { session: Session; token: JWT; account?: Account | null }) => {
+    session: ({
+      session,
+      token,
+      account,
+    }: {
+      session: Session;
+      token: JWT;
+      account?: Account | null;
+    }) => {
       if (session.user) {
         session.user.id = token.id;
         session.user.type = token.type;

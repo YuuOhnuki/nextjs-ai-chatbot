@@ -1,5 +1,3 @@
-import { translations } from "../translations";
-
 export const DEFAULT_CHAT_MODEL: string = "chat-model";
 
 export type ChatModel = {

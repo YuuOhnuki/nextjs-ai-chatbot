@@ -20,7 +20,8 @@ export const en = {
   forFree: " for free.",
 
   // Register
-  createAccountWithEmailPassword: "Create an account with your email and password",
+  createAccountWithEmailPassword:
+    "Create an account with your email and password",
   signInInstead: "Sign in instead.",
 
   // Settings
@@ -57,7 +58,8 @@ export const en = {
   // Account tab
   accountInfo: "Account Info",
   deleteAccount: "Delete Account",
-  deleteAccountWarning: "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+  deleteAccountWarning:
+    "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
 
   // Account Card
   emailLabel: "Email Address:",
@@ -78,7 +80,8 @@ export const en = {
   // Chat Input
   sendMessagePlaceholder: "Send a message...",
   waitForModelResponse: "Please wait for the model to finish its response!",
-  modelDescriptionAdvanced: "Advanced multimodal model with vision and text capabilities",
+  modelDescriptionAdvanced:
+    "Advanced multimodal model with vision and text capabilities",
   modelDescriptionFast: "Fast and efficient model for quick responses",
 
   // Visibility
@@ -115,7 +118,8 @@ export const en = {
 
   // Alerts
   activateAIGateway: "Activate AI Gateway",
-  activateAIGatewayDescription: "This application requires the owner to activate Vercel AI Gateway.",
+  activateAIGatewayDescription:
+    "This application requires the owner to activate Vercel AI Gateway.",
   activate: "Activate",
 
   // Suggested Actions
@@ -129,7 +133,8 @@ export const en = {
 
   // Sidebar
   deleteAllChats: "Delete all chats?",
-  deleteAllChatsDescription: "This action cannot be undone. This will permanently delete all your chats and remove them from our servers.",
+  deleteAllChatsDescription:
+    "This action cannot be undone. This will permanently delete all your chats and remove them from our servers.",
   deleteAll: "Delete All",
 
   // Toasts
@@ -158,16 +163,20 @@ export const en = {
   last30Days: "Last 30 days",
   olderThanLastMonth: "Older than last month",
   loginToSave: "Login to save and revisit previous chats!",
-  conversationsWillAppear: "Your conversations will appear here once you start chatting!",
+  conversationsWillAppear:
+    "Your conversations will appear here once you start chatting!",
   reachedEndOfHistory: "You have reached the end of your chat history.",
   loadingChats: "Loading Chats...",
   areYouAbsolutelySure: "Are you absolutely sure?",
-  deleteChatDescription: "This action cannot be undone. This will permanently delete your chat and remove it from our servers.",
+  deleteChatDescription:
+    "This action cannot be undone. This will permanently delete your chat and remove it from our servers.",
   continue: "Continue",
 
   // Error messages
-  aiOverloaded: "The AI model is currently overloaded. Please try again in a few moments.",
-  rateLimitExceeded: "Rate limit exceeded. Please wait a moment before trying again.",
+  aiOverloaded:
+    "The AI model is currently overloaded. Please try again in a few moments.",
+  rateLimitExceeded:
+    "Rate limit exceeded. Please wait a moment before trying again.",
   unexpectedError: "An unexpected error occurred. Please try again.",
   somethingWrong: "Something went wrong. Please try again later.",
 

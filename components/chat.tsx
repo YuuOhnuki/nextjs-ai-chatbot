@@ -3,7 +3,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import useSWR, { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
 import { ChatHeader } from "@/components/chat-header";
@@ -19,44 +20,37 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useArtifactSelector } from "@/hooks/use-artifact";
 import { useAutoResume } from "@/hooks/use-auto-resume";
+import { useTranslation } from "@/hooks/use-translation";
+import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import type { Vote } from "@/lib/db/schema";
 import { ChatSDKError } from "@/lib/errors";
+import type { ToolMetadata } from "@/lib/tools-metadata";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
-import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import { fetcher, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
+import { Artifact } from "./artifact";
 import { useDataStream } from "./data-stream-provider";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
-import { toast } from "sonner";
-import type { VisibilityType } from "./visibility-selector";
-import { useTranslation } from "@/hooks/useTranslation";
-import { Artifact } from "./artifact";
 import { ToolApps } from "./tool-apps";
 import { ToolSelectorDialog } from "./tool-selector-dialog";
-import type { ToolMetadata } from "@/lib/tools-metadata";
+import type { VisibilityType } from "./visibility-selector";
 
 export function Chat({
   id,
   initialMessages,
-  initialChatModel,
-  initialVisibilityType,
   isReadonly,
   autoResume,
   initialLastContext,
-  session,
 }: {
   id: string;
   initialMessages: ChatMessage[];
-  initialChatModel: string;
-  initialVisibilityType: VisibilityType;
   isReadonly: boolean;
   autoResume: boolean;
   initialLastContext?: AppUsage;
-  session: any;
 }) {
-  const visibilityType: VisibilityType = "private";
+  const _visibilityType: VisibilityType = "private";
 
   const { mutate } = useSWRConfig();
   const { setDataStream } = useDataStream();
@@ -119,14 +113,20 @@ export function Chat({
         }
       } else if (error instanceof Error) {
         // Handle other errors like AI_RetryError
-        if (error.message?.includes("overloaded") || error.message?.includes("maxRetriesExceeded")) {
+        if (
+          error.message?.includes("overloaded") ||
+          error.message?.includes("maxRetriesExceeded")
+        ) {
           toast.error(t("aiOverloaded"), {
             action: {
               label: "Retry",
               onClick: () => regenerate(),
             },
           });
-        } else if (error.message?.includes("rate limit") || error.message?.includes("quota")) {
+        } else if (
+          error.message?.includes("rate limit") ||
+          error.message?.includes("quota")
+        ) {
           toast.error(t("rateLimitExceeded"), {
             action: {
               label: "Retry",
@@ -170,11 +170,13 @@ export function Chat({
     setToolDialogOpen(true);
   };
 
-  const handleToolSubmit = (input: string) => {
-    if (!selectedTool) return;
+  const handleToolSubmit = (toolInput: string) => {
+    if (!selectedTool) {
+      return;
+    }
 
     // Create a message that will trigger the tool
-    const toolMessage = `${selectedTool.name}: ${input}`;
+    const toolMessage = `${selectedTool.name}: ${toolInput}`;
 
     sendMessage({
       role: "user" as const,
@@ -196,16 +198,13 @@ export function Chat({
     <>
       <ToolApps onToolSelect={handleToolSelect} />
       <ToolSelectorDialog
-        tool={selectedTool}
-        open={toolDialogOpen}
         onOpenChange={setToolDialogOpen}
         onSubmit={handleToolSubmit}
+        open={toolDialogOpen}
+        tool={selectedTool}
       />
       <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
-        <ChatHeader
-          chatId={id}
-          isReadonly={isReadonly}
-        />
+        <ChatHeader />
 
         <Messages
           chatId={id}
@@ -213,8 +212,6 @@ export function Chat({
           isReadonly={isReadonly}
           messages={messages}
           regenerate={regenerate}
-          selectedModelId={currentModelId}
-          session={session}
           setMessages={setMessages}
           status={status}
           votes={votes}
@@ -225,6 +222,7 @@ export function Chat({
             <MultimodalInput
               attachments={attachments}
               chatId={id}
+              handleToolSelect={handleToolSelect}
               input={input}
               messages={messages}
               selectedModelId={currentModelId}
@@ -236,7 +234,6 @@ export function Chat({
               status={status}
               stop={stop}
               usage={usage}
-              handleToolSelect={handleToolSelect}
             />
           )}
         </div>

@@ -1,6 +1,6 @@
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import Form from "next/form";
 import { signIn } from "next-auth/react";
-import { SiGoogle, SiGithub } from "@icons-pack/react-simple-icons";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,19 +28,19 @@ export function AuthForm({
     <div className="flex flex-col gap-4 px-4 sm:px-16">
       <div className="flex flex-col gap-4">
         <Button
+          aria-label={t("continueWithGoogle")}
+          className="h-12 w-full justify-start gap-3 shadow-sm transition-shadow hover:shadow-md"
           onClick={() => handleOAuthSignIn("google")}
           variant="outline"
-          className="w-full justify-start gap-3 h-12 shadow-sm hover:shadow-md transition-shadow"
-          aria-label={t("continueWithGoogle")}
         >
           <SiGoogle size={20} />
           {t("continueWithGoogle")}
         </Button>
         <Button
+          aria-label={t("continueWithGitHub")}
+          className="h-12 w-full justify-start gap-3 shadow-sm transition-shadow hover:shadow-md"
           onClick={() => handleOAuthSignIn("github")}
           variant="outline"
-          className="w-full justify-start gap-3 h-12 shadow-sm hover:shadow-md transition-shadow"
-          aria-label={t("continueWithGitHub")}
         >
           <SiGithub size={20} />
           {t("continueWithGitHub")}
@@ -52,7 +52,9 @@ export function AuthForm({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">{t("orContinueWith")}</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            {t("orContinueWith")}
+          </span>
         </div>
       </div>
 

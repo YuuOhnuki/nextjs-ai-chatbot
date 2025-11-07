@@ -2,7 +2,6 @@
 
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { Trigger } from "@radix-ui/react-select";
-import type { UIMessage } from "ai";
 import equal from "fast-deep-equal";
 import {
   type ChangeEvent,
@@ -19,14 +18,14 @@ import {
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
 import { saveChatModelAsCookie } from "@/app/(chat)/actions";
+import { DynamicSuggestedActions } from "@/components/dynamic-suggested-actions";
 import { SelectItem } from "@/components/ui/select";
+import { useTranslation } from "@/hooks/use-translation";
 import { chatModels } from "@/lib/ai/models";
 import { myProvider } from "@/lib/ai/providers";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { cn } from "@/lib/utils";
-import { useTranslation } from "@/hooks/useTranslation";
-import { Context } from "./elements/context";
 import {
   PromptInput,
   PromptInputModelSelect,
@@ -44,11 +43,10 @@ import {
   StopIcon,
 } from "./icons";
 import { PreviewAttachment } from "./preview-attachment";
-import { DynamicSuggestedActions } from "@/components/dynamic-suggested-actions";
-import { Button } from "./ui/button";
-import type { VisibilityType } from "./visibility-selector";
 import { SuggestedActions } from "./suggested-actions";
 import { ToolApps } from "./tool-apps";
+import { Button } from "./ui/button";
+import type { VisibilityType } from "./visibility-selector";
 
 function PureMultimodalInput({
   chatId,
@@ -205,7 +203,7 @@ function PureMultimodalInput({
     return myProvider.languageModel(selectedModelId);
   }, [selectedModelId]);
 
-  const contextProps = useMemo(
+  const _contextProps = useMemo(
     () => ({
       usage,
     }),
@@ -237,36 +235,41 @@ function PureMultimodalInput({
     },
     [setAttachments, uploadFile]
   );
-  
+
   const handlePaste = useCallback(
     async (event: ClipboardEvent) => {
       const items = event.clipboardData?.items;
-      if (!items) return;
+      if (!items) {
+        return;
+      }
 
       const imageItems = Array.from(items).filter((item) =>
-        item.type.startsWith('image/'),
+        item.type.startsWith("image/")
       );
 
-      if (imageItems.length === 0) return;
+      if (imageItems.length === 0) {
+        return;
+      }
 
       // Prevent default paste behavior for images
       event.preventDefault();
 
-      setUploadQueue((prev) => [...prev, 'Pasted image']);
+      setUploadQueue((prev) => [...prev, "Pasted image"]);
 
       try {
-        const uploadPromises = imageItems.map(async (item) => {
-          const file = item.getAsFile();
-          if (!file) return;
-          return uploadFile(file);
-        });
+        const validItems = imageItems.filter(
+          (item) => item.getAsFile() !== null
+        );
+        const uploadPromises = validItems.map((item) =>
+          uploadFile(item.getAsFile() as File)
+        );
 
         const uploadedAttachments = await Promise.all(uploadPromises);
         const successfullyUploadedAttachments = uploadedAttachments.filter(
           (attachment) =>
             attachment !== undefined &&
             attachment.url !== undefined &&
-            attachment.contentType !== undefined,
+            attachment.contentType !== undefined
         );
 
         setAttachments((curr) => [
@@ -274,22 +277,24 @@ function PureMultimodalInput({
           ...(successfullyUploadedAttachments as Attachment[]),
         ]);
       } catch (error) {
-        console.error('Error uploading pasted images:', error);
-        toast.error('Failed to upload pasted image(s)');
+        console.error("Error uploading pasted images:", error);
+        toast.error("Failed to upload pasted image(s)");
       } finally {
         setUploadQueue([]);
       }
     },
-    [setAttachments],
+    [setAttachments, uploadFile]
   );
 
   // Add paste event listener to textarea
   useEffect(() => {
     const textarea = textareaRef.current;
-    if (!textarea) return;
+    if (!textarea) {
+      return;
+    }
 
-    textarea.addEventListener('paste', handlePaste);
-    return () => textarea.removeEventListener('paste', handlePaste);
+    textarea.addEventListener("paste", handlePaste);
+    return () => textarea.removeEventListener("paste", handlePaste);
   }, [handlePaste]);
 
   return (
@@ -401,9 +406,9 @@ function PureMultimodalInput({
           ) : (
             <PromptInputSubmit
               className="size-8 rounded-full bg-primary text-primary-foreground transition-colors duration-200 hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+              data-testid="send-button"
               disabled={!input.trim() || uploadQueue.length > 0}
               status={status}
-	      data-testid="send-button"
             >
               <ArrowUpIcon size={14} />
             </PromptInputSubmit>
@@ -502,10 +507,10 @@ function PureModelSelectorCompact({
       value={selectedModel?.id}
     >
       <Trigger asChild>
-        <Button variant="ghost" className="h-8 px-2">
+        <Button className="h-8 px-2" variant="ghost">
           <CpuIcon size={16} />
           <span className="hidden font-medium text-xs sm:block">
-            {selectedModel ? t(selectedModel.nameKey as any) : ''}
+            {selectedModel ? t(selectedModel.nameKey as any) : ""}
           </span>
           <ChevronDownIcon size={16} />
         </Button>
@@ -514,8 +519,16 @@ function PureModelSelectorCompact({
         <div className="flex flex-col gap-px">
           {chatModels.map((model) => (
             <SelectItem key={model.id} value={model.id}>
-              <div key={`${model.id}-name`} className="truncate font-medium text-xs">{t(model.nameKey as any)}</div>
-              <div key={`${model.id}-desc`} className="mt-px truncate text-[10px] text-muted-foreground leading-tight">
+              <div
+                className="truncate font-medium text-xs"
+                key={`${model.id}-name`}
+              >
+                {t(model.nameKey as any)}
+              </div>
+              <div
+                className="mt-px truncate text-[10px] text-muted-foreground leading-tight"
+                key={`${model.id}-desc`}
+              >
                 {t(model.description)}
               </div>
             </SelectItem>

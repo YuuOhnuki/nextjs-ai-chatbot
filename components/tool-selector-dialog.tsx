@@ -12,17 +12,22 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { type ToolMetadata } from "@/lib/tools-metadata";
 import { useTranslation } from "@/hooks/useTranslation";
+import type { ToolMetadata } from "@/lib/tools-metadata";
 
-interface ToolSelectorDialogProps {
+type ToolSelectorDialogProps = {
   tool: ToolMetadata | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (input: string) => void;
-}
+};
 
-export function ToolSelectorDialog({ tool, open, onOpenChange, onSubmit }: ToolSelectorDialogProps) {
+export function ToolSelectorDialog({
+  tool,
+  open,
+  onOpenChange,
+  onSubmit,
+}: ToolSelectorDialogProps) {
   const [input, setInput] = useState("");
   const { t } = useTranslation();
 
@@ -36,23 +41,25 @@ export function ToolSelectorDialog({ tool, open, onOpenChange, onSubmit }: ToolS
 
   const getPlaceholder = (toolId: string) => {
     switch (toolId) {
-      case 'get-weather':
+      case "get-weather":
         return "Enter city name (e.g., Tokyo, New York)";
-      case 'create-document':
+      case "create-document":
         return "Enter document title";
-      case 'update-document':
+      case "update-document":
         return "Enter document ID and content";
-      case 'request-suggestions':
+      case "request-suggestions":
         return "Describe what you need suggestions for";
       default:
         return "Enter your request";
     }
   };
 
-  if (!tool) return null;
+  if (!tool) {
+    return null;
+  }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t(tool.nameKey as any)}</DialogTitle>
@@ -60,25 +67,25 @@ export function ToolSelectorDialog({ tool, open, onOpenChange, onSubmit }: ToolS
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="tool-input" className="text-right">
+            <Label className="text-right" htmlFor="tool-input">
               {t("toolInputLabel")}
             </Label>
             <Input
-              id="tool-input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={getPlaceholder(tool.id)}
               className="col-span-3"
+              id="tool-input"
+              onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   handleSubmit();
                 }
               }}
+              placeholder={getPlaceholder(tool.id)}
+              value={input}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleSubmit} disabled={!input.trim()}>
+          <Button disabled={!input.trim()} onClick={handleSubmit}>
             {t("toolExecuteButton")}
           </Button>
         </DialogFooter>
