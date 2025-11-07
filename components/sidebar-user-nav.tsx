@@ -1,8 +1,9 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { User } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -20,96 +21,106 @@ import {
 } from "@/components/ui/sidebar";
 import { guestRegex } from "@/lib/constants";
 import { LoaderIcon } from "./icons";
+import { SettingsModal } from "./settings-modal";
 import { toast } from "./toast";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function SidebarUserNav({ user }: { user: User }) {
   const router = useRouter();
   const { data, status } = useSession();
   const { setTheme, resolvedTheme } = useTheme();
+  const { t } = useTranslation();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const isGuest = guestRegex.test(data?.user?.email ?? "");
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            {status === "loading" ? (
-              <SidebarMenuButton className="h-10 justify-between bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                <div className="flex flex-row gap-2">
-                  <div className="size-6 animate-pulse rounded-full bg-zinc-500/30" />
-                  <span className="animate-pulse rounded-md bg-zinc-500/30 text-transparent">
-                    Loading auth status
+    <>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              {status === "loading" ? (
+                <SidebarMenuButton className="h-10 justify-between bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+                  <div className="flex flex-row gap-2">
+                    <div className="size-6 animate-pulse rounded-full bg-zinc-500/30" />
+                    <span className="animate-pulse rounded-md bg-zinc-500/30 text-transparent">
+                      Loading auth status
+                    </span>
+                  </div>
+                  <div className="animate-spin text-zinc-500">
+                    <LoaderIcon />
+                  </div>
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton
+                  className="h-10 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  data-testid="user-nav-button"
+                >
+                  <Image
+                    alt={user.email ?? "User Avatar"}
+                    className="rounded-full"
+                    height={24}
+                    src={data?.user?.image || `https://avatar.vercel.sh/${user.email}`}
+                    width={24}
+                  />
+                  <span className="truncate" data-testid="user-email">
+                    {isGuest ? "Guest" : user?.name || user?.email}
                   </span>
-                </div>
-                <div className="animate-spin text-zinc-500">
-                  <LoaderIcon />
-                </div>
-              </SidebarMenuButton>
-            ) : (
-              <SidebarMenuButton
-                className="h-10 bg-background data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                data-testid="user-nav-button"
-              >
-                <Image
-                  alt={user.email ?? "User Avatar"}
-                  className="rounded-full"
-                  height={24}
-                  src={`https://avatar.vercel.sh/${user.email}`}
-                  width={24}
-                />
-                <span className="truncate" data-testid="user-email">
-                  {isGuest ? "Guest" : user?.email}
-                </span>
-                <ChevronUp className="ml-auto" />
-              </SidebarMenuButton>
-            )}
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-popper-anchor-width)"
-            data-testid="user-nav-menu"
-            side="top"
-          >
-            <DropdownMenuItem
-              className="cursor-pointer"
-              data-testid="user-nav-item-theme"
-              onSelect={() =>
-                setTheme(resolvedTheme === "dark" ? "light" : "dark")
-              }
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-(--radix-popper-anchor-width)"
+              data-testid="user-nav-menu"
+              side="top"
             >
-              {`Toggle ${resolvedTheme === "light" ? "dark" : "light"} mode`}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild data-testid="user-nav-item-auth">
-              <button
-                className="w-full cursor-pointer"
-                onClick={() => {
-                  if (status === "loading") {
-                    toast({
-                      type: "error",
-                      description:
-                        "Checking authentication status, please try again!",
-                    });
-
-                    return;
-                  }
-
-                  if (isGuest) {
-                    router.push("/login");
-                  } else {
-                    signOut({
-                      redirectTo: "/",
-                    });
-                  }
-                }}
-                type="button"
+              {!isGuest && (
+                <div className="px-2 py-1.5 text-sm text-muted-foreground border-b">
+                  {user?.email}
+                </div>
+              )}
+              <DropdownMenuItem
+                className="cursor-pointer flex items-center gap-2 px-3 py-2"
+                data-testid="user-nav-item-settings"
+                onSelect={() => setSettingsOpen(true)}
               >
-                {isGuest ? "Login to your account" : "Sign out"}
-              </button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+                <Settings className="h-4 w-4" />
+                {t("settings")}
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild data-testid="user-nav-item-auth">
+                <button
+                  className="w-full cursor-pointer flex items-center gap-2 px-3 py-2"
+                  onClick={() => {
+                    if (status === "loading") {
+                      toast({
+                        type: "error",
+                        description: t("checkingAuthStatus"),
+                      });
+
+                      return;
+                    }
+
+                    if (isGuest) {
+                      router.push("/login");
+                    } else {
+                      signOut({
+                        redirectTo: "/",
+                      });
+                    }
+                  }}
+                  type="button"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {isGuest ? t("loginToYourAccount") : t("signOut")}
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+      </SidebarMenu>
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+    </>
   );
 }

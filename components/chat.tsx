@@ -19,19 +19,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useArtifactSelector } from "@/hooks/use-artifact";
 import { useAutoResume } from "@/hooks/use-auto-resume";
-import { useChatVisibility } from "@/hooks/use-chat-visibility";
 import type { Vote } from "@/lib/db/schema";
 import { ChatSDKError } from "@/lib/errors";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
+import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import { fetcher, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
-import { Artifact } from "./artifact";
 import { useDataStream } from "./data-stream-provider";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
 import { getChatHistoryPaginationKey } from "./sidebar-history";
-import { toast } from "./toast";
+import { toast } from "sonner";
 import type { VisibilityType } from "./visibility-selector";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Artifact } from "./artifact";
+import { ToolApps } from "./tool-apps";
+import { ToolSelectorDialog } from "./tool-selector-dialog";
+import type { ToolMetadata } from "@/lib/tools-metadata";
 
 export function Chat({
   id,
@@ -41,6 +45,7 @@ export function Chat({
   isReadonly,
   autoResume,
   initialLastContext,
+  session,
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -49,11 +54,9 @@ export function Chat({
   isReadonly: boolean;
   autoResume: boolean;
   initialLastContext?: AppUsage;
+  session: any;
 }) {
-  const { visibilityType } = useChatVisibility({
-    chatId: id,
-    initialVisibilityType,
-  });
+  const visibilityType: VisibilityType = "private";
 
   const { mutate } = useSWRConfig();
   const { setDataStream } = useDataStream();
@@ -61,12 +64,11 @@ export function Chat({
   const [input, setInput] = useState<string>("");
   const [usage, setUsage] = useState<AppUsage | undefined>(initialLastContext);
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
-  const [currentModelId, setCurrentModelId] = useState(initialChatModel);
-  const currentModelIdRef = useRef(currentModelId);
+  const [selectedTool, setSelectedTool] = useState<ToolMetadata | null>(null);
+  const [toolDialogOpen, setToolDialogOpen] = useState(false);
+  const currentModelId = DEFAULT_CHAT_MODEL;
 
-  useEffect(() => {
-    currentModelIdRef.current = currentModelId;
-  }, [currentModelId]);
+  const { t } = useTranslation();
 
   const {
     messages,
@@ -89,8 +91,8 @@ export function Chat({
           body: {
             id: request.id,
             message: request.messages.at(-1),
-            selectedChatModel: currentModelIdRef.current,
-            selectedVisibilityType: visibilityType,
+            selectedChatModel: currentModelId,
+            selectedVisibilityType: "private",
             ...request.body,
           },
         };
@@ -113,11 +115,30 @@ export function Chat({
         ) {
           setShowCreditCardAlert(true);
         } else {
-          toast({
-            type: "error",
-            description: error.message,
-          });
+          toast.error(error.message);
         }
+      } else if (error instanceof Error) {
+        // Handle other errors like AI_RetryError
+        if (error.message?.includes("overloaded") || error.message?.includes("maxRetriesExceeded")) {
+          toast.error(t("aiOverloaded"), {
+            action: {
+              label: "Retry",
+              onClick: () => regenerate(),
+            },
+          });
+        } else if (error.message?.includes("rate limit") || error.message?.includes("quota")) {
+          toast.error(t("rateLimitExceeded"), {
+            action: {
+              label: "Retry",
+              onClick: () => regenerate(),
+            },
+          });
+        } else {
+          toast.error(t("unexpectedError"));
+        }
+      } else {
+        // Fallback for unknown error types
+        toast.error(t("somethingWrong"));
       }
     },
   });
@@ -144,6 +165,23 @@ export function Chat({
     fetcher
   );
 
+  const handleToolSelect = (tool: ToolMetadata) => {
+    setSelectedTool(tool);
+    setToolDialogOpen(true);
+  };
+
+  const handleToolSubmit = (input: string) => {
+    if (!selectedTool) return;
+
+    // Create a message that will trigger the tool
+    const toolMessage = `${selectedTool.name}: ${input}`;
+
+    sendMessage({
+      role: "user" as const,
+      parts: [{ type: "text", text: toolMessage }],
+    });
+  };
+
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
@@ -156,11 +194,17 @@ export function Chat({
 
   return (
     <>
+      <ToolApps onToolSelect={handleToolSelect} />
+      <ToolSelectorDialog
+        tool={selectedTool}
+        open={toolDialogOpen}
+        onOpenChange={setToolDialogOpen}
+        onSubmit={handleToolSubmit}
+      />
       <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
         <ChatHeader
           chatId={id}
           isReadonly={isReadonly}
-          selectedVisibilityType={initialVisibilityType}
         />
 
         <Messages
@@ -169,7 +213,8 @@ export function Chat({
           isReadonly={isReadonly}
           messages={messages}
           regenerate={regenerate}
-          selectedModelId={initialChatModel}
+          selectedModelId={currentModelId}
+          session={session}
           setMessages={setMessages}
           status={status}
           votes={votes}
@@ -182,9 +227,8 @@ export function Chat({
               chatId={id}
               input={input}
               messages={messages}
-              onModelChange={setCurrentModelId}
               selectedModelId={currentModelId}
-              selectedVisibilityType={visibilityType}
+              selectedVisibilityType="private"
               sendMessage={sendMessage}
               setAttachments={setAttachments}
               setInput={setInput}
@@ -192,6 +236,7 @@ export function Chat({
               status={status}
               stop={stop}
               usage={usage}
+              handleToolSelect={handleToolSelect}
             />
           )}
         </div>
@@ -205,7 +250,7 @@ export function Chat({
         messages={messages}
         regenerate={regenerate}
         selectedModelId={currentModelId}
-        selectedVisibilityType={visibilityType}
+        selectedVisibilityType="private"
         sendMessage={sendMessage}
         setAttachments={setAttachments}
         setInput={setInput}
@@ -221,15 +266,13 @@ export function Chat({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Activate AI Gateway</AlertDialogTitle>
+            <AlertDialogTitle>{t("activateAIGateway")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This application requires{" "}
-              {process.env.NODE_ENV === "production" ? "the owner" : "you"} to
-              activate Vercel AI Gateway.
+              {t("activateAIGatewayDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 window.open(
@@ -239,7 +282,7 @@ export function Chat({
                 window.location.href = "/";
               }}
             >
-              Activate
+              {t("activate")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

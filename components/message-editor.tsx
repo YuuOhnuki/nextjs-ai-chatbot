@@ -14,6 +14,7 @@ import type { ChatMessage } from "@/lib/types";
 import { getTextFromMessage } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export type MessageEditorProps = {
   message: ChatMessage;
@@ -28,6 +29,7 @@ export function MessageEditor({
   setMessages,
   regenerate,
 }: MessageEditorProps) {
+
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [draftContent, setDraftContent] = useState<string>(
@@ -52,6 +54,8 @@ export function MessageEditor({
     setDraftContent(event.target.value);
     adjustHeight();
   };
+
+  const { language, setLanguage, t } = useTranslation();
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -104,7 +108,7 @@ export function MessageEditor({
           }}
           variant="default"
         >
-          {isSubmitting ? "Sending..." : "Send"}
+          {isSubmitting ? t("sending") : t("send")}
         </Button>
       </div>
     </div>

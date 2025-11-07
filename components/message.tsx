@@ -1,8 +1,9 @@
 "use client";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
+import { BrainIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { cn, sanitizeText } from "@/lib/utils";
@@ -18,7 +19,7 @@ import {
   ToolInput,
   ToolOutput,
 } from "./elements/tool";
-import { SparklesIcon } from "./icons";
+import { useTranslation } from "@/hooks/useTranslation";
 import { MessageActions } from "./message-actions";
 import { MessageEditor } from "./message-editor";
 import { MessageReasoning } from "./message-reasoning";
@@ -34,6 +35,7 @@ const PurePreviewMessage = ({
   regenerate,
   isReadonly,
   requiresScrollPadding,
+  session,
 }: {
   chatId: string;
   message: ChatMessage;
@@ -43,6 +45,7 @@ const PurePreviewMessage = ({
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   requiresScrollPadding: boolean;
+  session: any;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
 
@@ -66,11 +69,9 @@ const PurePreviewMessage = ({
           "justify-start": message.role === "assistant",
         })}
       >
-        {message.role === "assistant" && (
-          <div className="-mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
-            <SparklesIcon size={14} />
-          </div>
-        )}
+        {message.role === "assistant" && null}
+
+        {message.role === "user" && null}
 
         <div
           className={cn("flex flex-col", {
@@ -311,6 +312,7 @@ export const PreviewMessage = memo(
 
 export const ThinkingMessage = () => {
   const role = "assistant";
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -323,14 +325,39 @@ export const ThinkingMessage = () => {
       transition={{ duration: 0.2 }}
     >
       <div className="flex items-start justify-start gap-3">
-        <div className="-mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
-          <SparklesIcon size={14} />
+        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border bg-primary text-primary-foreground">
+          <BrainIcon className="size-4" />
         </div>
 
         <div className="flex w-full flex-col gap-2 md:gap-4">
-          <div className="p-0 text-muted-foreground text-sm">
-            Thinking...
+          <div className="flex items-center gap-2">
+            <div className="flex space-x-1">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                className="size-2 rounded-full bg-primary/60"
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                className="size-2 rounded-full bg-primary/60"
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                className="size-2 rounded-full bg-primary/60"
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
+              />
+            </div>
+            <span className="text-muted-foreground text-sm">
+              {t("thinking")}
+            </span>
           </div>
+
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            className="h-4 w-32 rounded bg-muted animate-pulse"
+            transition={{ duration: 2, repeat: Infinity }}
+          />
         </div>
       </div>
     </motion.div>

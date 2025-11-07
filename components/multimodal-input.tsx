@@ -25,6 +25,7 @@ import { myProvider } from "@/lib/ai/providers";
 import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/useTranslation";
 import { Context } from "./elements/context";
 import {
   PromptInput,
@@ -43,9 +44,11 @@ import {
   StopIcon,
 } from "./icons";
 import { PreviewAttachment } from "./preview-attachment";
-import { SuggestedActions } from "./suggested-actions";
+import { DynamicSuggestedActions } from "@/components/dynamic-suggested-actions";
 import { Button } from "./ui/button";
 import type { VisibilityType } from "./visibility-selector";
+import { SuggestedActions } from "./suggested-actions";
+import { ToolApps } from "./tool-apps";
 
 function PureMultimodalInput({
   chatId,
@@ -63,6 +66,7 @@ function PureMultimodalInput({
   selectedModelId,
   onModelChange,
   usage,
+  handleToolSelect,
 }: {
   chatId: string;
   input: string;
@@ -71,7 +75,7 @@ function PureMultimodalInput({
   stop: () => void;
   attachments: Attachment[];
   setAttachments: Dispatch<SetStateAction<Attachment[]>>;
-  messages: UIMessage[];
+  messages: ChatMessage[];
   setMessages: UseChatHelpers<ChatMessage>["setMessages"];
   sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
   className?: string;
@@ -79,9 +83,11 @@ function PureMultimodalInput({
   selectedModelId: string;
   onModelChange?: (modelId: string) => void;
   usage?: AppUsage;
+  handleToolSelect: (tool: any) => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
+  const { t } = useTranslation();
 
   const adjustHeight = useCallback(() => {
     if (textareaRef.current) {
@@ -288,15 +294,25 @@ function PureMultimodalInput({
 
   return (
     <div className={cn("relative flex w-full flex-col gap-4", className)}>
-      {messages.length === 0 &&
+      {(messages.length === 0 &&
         attachments.length === 0 &&
-        uploadQueue.length === 0 && (
+        uploadQueue.length === 0) ||
+      messages.length > 0 ? (
+        messages.length === 0 ? (
           <SuggestedActions
             chatId={chatId}
             selectedVisibilityType={selectedVisibilityType}
             sendMessage={sendMessage}
           />
-        )}
+        ) : (
+          <DynamicSuggestedActions
+            chatId={chatId}
+            messages={messages}
+            selectedVisibilityType={selectedVisibilityType}
+            sendMessage={sendMessage}
+          />
+        )
+      ) : null}
 
       <input
         className="-top-4 -left-4 pointer-events-none fixed size-0.5 opacity-0"
@@ -312,7 +328,7 @@ function PureMultimodalInput({
         onSubmit={(event) => {
           event.preventDefault();
           if (status !== "ready") {
-            toast.error("Please wait for the model to finish its response!");
+            toast.error(t("waitForModelResponse"));
           } else {
             submitForm();
           }
@@ -360,12 +376,11 @@ function PureMultimodalInput({
             maxHeight={200}
             minHeight={44}
             onChange={handleInput}
-            placeholder="Send a message..."
+            placeholder={t("sendMessagePlaceholder")}
             ref={textareaRef}
             rows={1}
             value={input}
-          />{" "}
-          <Context {...contextProps} />
+          />
         </div>
         <PromptInputToolbar className="!border-top-0 border-t-0! p-0 shadow-none dark:border-0 dark:border-transparent!">
           <PromptInputTools className="gap-0 sm:gap-0.5">
@@ -374,6 +389,7 @@ function PureMultimodalInput({
               selectedModelId={selectedModelId}
               status={status}
             />
+            <ToolApps onToolSelect={handleToolSelect} />
             <ModelSelectorCompact
               onModelChange={onModelChange}
               selectedModelId={selectedModelId}
@@ -414,6 +430,9 @@ export const MultimodalInput = memo(
       return false;
     }
     if (prevProps.selectedModelId !== nextProps.selectedModelId) {
+      return false;
+    }
+    if (prevProps.handleToolSelect !== nextProps.handleToolSelect) {
       return false;
     }
 
@@ -458,6 +477,7 @@ function PureModelSelectorCompact({
   onModelChange?: (modelId: string) => void;
 }) {
   const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setOptimisticModelId(selectedModelId);
@@ -469,8 +489,8 @@ function PureModelSelectorCompact({
 
   return (
     <PromptInputModelSelect
-      onValueChange={(modelName) => {
-        const model = chatModels.find((m) => m.name === modelName);
+      onValueChange={(modelId) => {
+        const model = chatModels.find((m) => m.id === modelId);
         if (model) {
           setOptimisticModelId(model.id);
           onModelChange?.(model.id);
@@ -479,13 +499,13 @@ function PureModelSelectorCompact({
           });
         }
       }}
-      value={selectedModel?.name}
+      value={selectedModel?.id}
     >
       <Trigger asChild>
         <Button variant="ghost" className="h-8 px-2">
           <CpuIcon size={16} />
           <span className="hidden font-medium text-xs sm:block">
-            {selectedModel?.name}
+            {selectedModel ? t(selectedModel.nameKey as any) : ''}
           </span>
           <ChevronDownIcon size={16} />
         </Button>
@@ -493,10 +513,10 @@ function PureModelSelectorCompact({
       <PromptInputModelSelectContent className="min-w-[260px] p-0">
         <div className="flex flex-col gap-px">
           {chatModels.map((model) => (
-            <SelectItem key={model.id} value={model.name}>
-              <div className="truncate font-medium text-xs">{model.name}</div>
-              <div className="mt-px truncate text-[10px] text-muted-foreground leading-tight">
-                {model.description}
+            <SelectItem key={model.id} value={model.id}>
+              <div key={`${model.id}-name`} className="truncate font-medium text-xs">{t(model.nameKey as any)}</div>
+              <div key={`${model.id}-desc`} className="mt-px truncate text-[10px] text-muted-foreground leading-tight">
+                {t(model.description)}
               </div>
             </SelectItem>
           ))}

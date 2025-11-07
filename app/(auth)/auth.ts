@@ -2,8 +2,10 @@ import { compare } from "bcrypt-ts";
 import NextAuth, { type DefaultSession } from "next-auth";
 import type { DefaultJWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
 import { DUMMY_PASSWORD } from "@/lib/constants";
-import { createGuestUser, getUser } from "@/lib/db/queries";
+import { createGuestUser, createUser, getUser } from "@/lib/db/queries";
 import { authConfig } from "./auth.config";
 
 export type UserType = "guest" | "regular";
@@ -14,6 +16,10 @@ declare module "next-auth" {
       id: string;
       type: UserType;
     } & DefaultSession["user"];
+    account?: {
+      provider: string;
+      type: string;
+    };
   }
 
   // biome-ignore lint/nursery/useConsistentTypeDefinitions: "Required"
@@ -73,20 +79,49 @@ export const {
         return { ...guestUser, type: "guest" };
       },
     }),
+ Google({ clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET }),
+    GitHub({ clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET }),
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user) {
+    jwt: async ({ token, user, account }) => {
+      // Handle OAuth users - create them in database if they don't exist
+      if (account?.provider && user?.email) {
+        try {
+          const existingUsers = await getUser(user.email);
+          if (existingUsers.length === 0) {
+            // Create new user in database
+            const newUser = await createUser(user.email); // No password for OAuth users
+            token.id = newUser[0].id;
+          } else {
+            // Use existing user ID
+            token.id = existingUsers[0].id;
+          }
+        } catch (error) {
+          console.error("Failed to create/find OAuth user:", error);
+          // Fall back to a generated ID, but this might cause issues
+          token.id = user.id as string;
+        }
+      } else if (user) {
         token.id = user.id as string;
-        token.type = user.type;
+      }
+
+      if (user) {
+        token.type = user.type || "regular";
       }
 
       return token;
     },
-    session({ session, token }) {
+    session({ session, token, account }) {
       if (session.user) {
         session.user.id = token.id;
         session.user.type = token.type;
+      }
+
+      if (account) {
+        session.account = {
+          provider: account.provider,
+          type: account.type,
+        };
       }
 
       return session;

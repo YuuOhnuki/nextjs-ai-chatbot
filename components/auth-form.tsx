@@ -1,7 +1,11 @@
 import Form from "next/form";
+import { signIn } from "next-auth/react";
+import { SiGoogle, SiGithub } from "@icons-pack/react-simple-icons";
 
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export function AuthForm({
   action,
@@ -14,47 +18,85 @@ export function AuthForm({
   children: React.ReactNode;
   defaultEmail?: string;
 }) {
+  const { t } = useTranslation();
+
+  const handleOAuthSignIn = (provider: string) => {
+    signIn(provider);
+  };
+
   return (
-    <Form action={action} className="flex flex-col gap-4 px-4 sm:px-16">
-      <div className="flex flex-col gap-2">
-        <Label
-          className="font-normal text-zinc-600 dark:text-zinc-400"
-          htmlFor="email"
+    <div className="flex flex-col gap-4 px-4 sm:px-16">
+      <div className="flex flex-col gap-4">
+        <Button
+          onClick={() => handleOAuthSignIn("google")}
+          variant="outline"
+          className="w-full justify-start gap-3 h-12 shadow-sm hover:shadow-md transition-shadow"
+          aria-label={t("continueWithGoogle")}
         >
-          Email Address
-        </Label>
-
-        <Input
-          autoComplete="email"
-          autoFocus
-          className="bg-muted text-md md:text-sm"
-          defaultValue={defaultEmail}
-          id="email"
-          name="email"
-          placeholder="user@acme.com"
-          required
-          type="email"
-        />
+          <SiGoogle size={20} />
+          {t("continueWithGoogle")}
+        </Button>
+        <Button
+          onClick={() => handleOAuthSignIn("github")}
+          variant="outline"
+          className="w-full justify-start gap-3 h-12 shadow-sm hover:shadow-md transition-shadow"
+          aria-label={t("continueWithGitHub")}
+        >
+          <SiGithub size={20} />
+          {t("continueWithGitHub")}
+        </Button>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label
-          className="font-normal text-zinc-600 dark:text-zinc-400"
-          htmlFor="password"
-        >
-          Password
-        </Label>
-
-        <Input
-          className="bg-muted text-md md:text-sm"
-          id="password"
-          name="password"
-          required
-          type="password"
-        />
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">{t("orContinueWith")}</span>
+        </div>
       </div>
 
-      {children}
-    </Form>
+      <Form action={action} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label
+            className="font-normal text-zinc-600 dark:text-zinc-400"
+            htmlFor="email"
+          >
+            {t("email")}
+          </Label>
+
+          <Input
+            autoComplete="email"
+            autoFocus
+            className="bg-muted text-md md:text-sm"
+            defaultValue={defaultEmail}
+            id="email"
+            name="email"
+            placeholder={t("emailPlaceholder")}
+            required
+            type="email"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label
+            className="font-normal text-zinc-600 dark:text-zinc-400"
+            htmlFor="password"
+          >
+            {t("password")}
+          </Label>
+
+          <Input
+            className="bg-muted text-md md:text-sm"
+            id="password"
+            name="password"
+            required
+            type="password"
+          />
+        </div>
+
+        {children}
+      </Form>
+    </div>
   );
 }

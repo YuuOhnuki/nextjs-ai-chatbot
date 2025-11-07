@@ -1,21 +1,22 @@
+import { translations } from "../translations";
+
 export const DEFAULT_CHAT_MODEL: string = "chat-model";
 
 export type ChatModel = {
   id: string;
-  name: string;
+  nameKey: string;
   description: string;
 };
 
 export const chatModels: ChatModel[] = [
   {
     id: "chat-model",
-    name: "Grok Vision",
-    description: "Advanced multimodal model with vision and text capabilities",
+    nameKey: "gemini15Pro",
+    description: "modelDescriptionAdvanced",
   },
   {
     id: "chat-model-reasoning",
-    name: "Grok Reasoning",
-    description:
-      "Uses advanced chain-of-thought reasoning for complex problems",
+    nameKey: "gemini15Flash",
+    description: "modelDescriptionFast",
   },
 ];
