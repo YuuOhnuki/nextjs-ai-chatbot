@@ -49,6 +49,27 @@ const THEME_COLOR_SCRIPT = `\
   updateThemeColor();
 })();`;
 
+const HIGHLIGHT_COLOR_SCRIPT = `\
+(function() {
+  var highlightColor = localStorage.getItem('highlightColor') || '#3b82f6';
+  document.documentElement.style.setProperty('--highlight', highlightColor);
+})();`;
+
+const ACCENT_COLOR_SCRIPT = `\
+(function() {
+  var accentColor = localStorage.getItem('accentColor') || 'blue';
+  var accentColors = {
+    blue: '#006cff',
+    green: '#10b981',
+    purple: '#8b5cf6',
+    red: '#ef4444',
+    orange: '#f97316',
+    pink: '#ec4899'
+  };
+  var color = accentColors[accentColor] || '#006cff';
+  document.documentElement.style.setProperty('--accent-color', color);
+})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -69,6 +90,18 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
           dangerouslySetInnerHTML={{
             __html: THEME_COLOR_SCRIPT,
+          }}
+        />
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
+          dangerouslySetInnerHTML={{
+            __html: HIGHLIGHT_COLOR_SCRIPT,
+          }}
+        />
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: "Required"
+          dangerouslySetInnerHTML={{
+            __html: ACCENT_COLOR_SCRIPT,
           }}
         />
       </head>

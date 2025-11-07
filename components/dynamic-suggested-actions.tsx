@@ -76,10 +76,10 @@ function generateSuggestions(
 
   // デフォルトの返答例
   return [
-    t("suggestionThankYou"),
-    t("suggestionCanYouExplain"),
-    t("suggestionTellMeMore"),
-    t("suggestionGotIt"),
+    t("suggestedAction1"),
+    t("suggestedAction2"),
+    t("suggestedAction3"),
+    t("suggestedAction4"),
   ];
 }
 
@@ -91,25 +91,18 @@ function PureDynamicSuggestedActions({
   const { t } = useTranslation();
 
   const suggestions = useMemo(() => {
-    if (messages.length === 0) {
+    const lastMessage = messages.length > 0 && messages[messages.length - 1];
+    if (lastMessage && lastMessage.role !== "assistant") {
       return [];
     }
 
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role !== "assistant") {
-      return [];
-    }
-
-    // 最後のアシスタントメッセージからテキストを取得
-    const lastMessageText = lastMessage.parts
-      .filter((part) => part.type === "text")
-      .map((part) => part.text)
-      .join(" ")
-      .trim();
-
-    if (!lastMessageText) {
-      return [];
-    }
+    const lastMessageText = lastMessage
+      ? lastMessage.parts
+          .filter((part) => part.type === "text")
+          .map((part) => part.text)
+          .join(" ")
+          .trim()
+      : "";
 
     return generateSuggestions(lastMessageText, t);
   }, [messages, t]);
@@ -120,7 +113,7 @@ function PureDynamicSuggestedActions({
 
   return (
     <div
-      className="mb-4 flex w-full gap-2 overflow-x-auto pb-2"
+      className="flex w-full gap-2 overflow-x-auto pb-2"
       data-testid="dynamic-suggested-actions"
     >
       {suggestions.map((suggestedAction, index) => (

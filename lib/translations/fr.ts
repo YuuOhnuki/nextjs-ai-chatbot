@@ -42,6 +42,13 @@ export const fr = {
   customization: "Personnalisation",
   appearance: "Apparence",
   accentColor: "Couleur d'Accente",
+  selectAccentColor: "Sélectionner la couleur d'accent",
+  blue: "Bleu",
+  green: "Vert",
+  purple: "Violet",
+  red: "Rouge",
+  orange: "Orange",
+  pink: "Rose",
 
   // Notifications
   responseNotifications: "Notifications de Réponse",
@@ -174,8 +181,9 @@ export const fr = {
   toolSuggestions: "Obtenir Suggestions",
   toolSuggestionsDesc: "Obtenir des suggestions d'IA",
 
-  // Dialog
+  // Tool Input
   toolInputLabel: "Entrée",
-  toolExecuteButton: "Exécuter l'Outil",
-  tools: "Outils",
+  toolExecuteButton: "Exécuter",
+
+  // Dialog
 };

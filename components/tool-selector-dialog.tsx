@@ -42,15 +42,15 @@ export function ToolSelectorDialog({
   const getPlaceholder = (toolId: string) => {
     switch (toolId) {
       case "get-weather":
-        return "Enter city name (e.g., Tokyo, New York)";
+        return t("weatherPlaceholder");
       case "create-document":
-        return "Enter document title";
+        return t("createDocumentPlaceholder");
       case "update-document":
-        return "Enter document ID and content";
+        return t("updateDocumentPlaceholder");
       case "request-suggestions":
-        return "Describe what you need suggestions for";
+        return t("requestSuggestionsPlaceholder");
       default:
-        return "Enter your request";
+        return t("defaultToolPlaceholder");
     }
   };
 
@@ -66,12 +66,11 @@ export function ToolSelectorDialog({
           <DialogDescription>{t(tool.descriptionKey as any)}</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right" htmlFor="tool-input">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="tool-input">
               {t("toolInputLabel")}
             </Label>
             <Input
-              className="col-span-3"
               id="tool-input"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {

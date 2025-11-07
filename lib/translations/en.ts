@@ -2,14 +2,15 @@ export const en = {
   // Auth
   signIn: "Sign In",
   signUp: "Sign Up",
+      signOut: "Sign Out",
   email: "Email Address",
-  emailPlaceholder: "user@acme.com",
   password: "Password",
   continueWith: "Continue with",
   dontHaveAccount: "Don't have an account?",
   alreadyHaveAccount: "Already have an account?",
   orContinueWith: "Or continue with",
-  useYourEmailAndPassword: "Use your email and password to sign in",
+  useYourEmailAndPassword:
+    "Use your email and password to sign in",
 
   // Auth Messages
   invalidCredentials: "Invalid credentials!",
@@ -27,39 +28,70 @@ export const en = {
   // Settings
   settings: "Settings",
   account: "Account",
-  memory: "Memory",
-  theme: "Theme",
+  english: "English",
+  spanish: "Spanish",
+  french: "French",
+  japanese: "Japanese",
   displayLanguage: "Display Language",
   themeColor: "Theme Color",
   commonPromptMemory: "Common Prompt Memory",
   memoryDescription: "This memory will be applied to all your conversations.",
   saveSettings: "Save Settings",
-  selectLanguage: "Select language",
-  selectTheme: "Select theme",
 
-  // New settings tabs
+  // General
   general: "General",
   notifications: "Notifications",
   customization: "Customization",
-
-  // General tab
   appearance: "Appearance",
   accentColor: "Accent Color",
+  selectAccentColor: "Select accent color",
+  blue: "Blue",
+  green: "Green",
+  purple: "Purple",
+  red: "Red",
+  orange: "Orange",
+  pink: "Pink",
 
-  // Notifications tab
-  responseNotifications: "Response Notifications",
-  soundNotifications: "Sound Notifications",
-
-  // Customization tab
+  // Notifications
   memoryEnabled: "Memory Enabled",
   memoryPrompt: "Memory Prompt",
   aboutMe: "About Me",
+  aboutMeDescription: "Introduce your name, occupation and other details",
 
-  // Account tab
-  accountInfo: "Account Info",
+  // Placeholders
+  emailPlaceholder: "your@email.com",
+  passwordPlaceholder: "••••••••",
+
+  // Select Options
+  selectLanguage: "Select Language",
+  selectTheme: "Select Theme",
+  light: "Light",
+  dark: "Dark",
+  system: "System",
+
+  // Highlight Color
+  highlightColor: "Highlight Color",
+
+  // Account
+  accountInfo: "Account Information",
   deleteAccount: "Delete Account",
   deleteAccountWarning:
     "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+
+  // Settings Toasts
+  accountDeleted: "Account deleted successfully",
+  deleteAccountFailed: "Failed to delete account",
+  deleteAccountError: "An error occurred while deleting account",
+
+  // Delete Account Dialog
+  deleteAccountTitle: "Delete Account",
+  deleteAccountDescription:
+    "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+
+  // Danger Zone
+  dangerZone: "Danger Zone",
+  deleteAccountWarningText:
+    "This action cannot be undone. This will permanently delete your account and all associated data.",
 
   // Account Card
   emailLabel: "Email Address:",
@@ -68,10 +100,6 @@ export const en = {
   githubAccount: "GitHub Account",
   oauthAccount: "OAuth Account",
 
-  // Common
-  cancel: "Cancel",
-  aboutMeDescription: "Enter your name, occupation, and other details",
-
   // Chat
   newChat: "New Chat",
   continueWithGoogle: "Continue with Google",
@@ -79,10 +107,17 @@ export const en = {
 
   // Chat Input
   sendMessagePlaceholder: "Send a message...",
-  waitForModelResponse: "Please wait for the model to finish its response!",
+  waitForModelResponse:
+    "Please wait for the model to finish its response!",
   modelDescriptionAdvanced:
     "Advanced multimodal model with vision and text capabilities",
   modelDescriptionFast: "Fast and efficient model for quick responses",
+  gemini25Pro: "Gemini 2.5 Pro",
+  gemini25Flash: "Gemini 2.5 Flash",
+
+  // Message
+  sending: "Sending...",
+  send: "Send",
 
   // Visibility
   private: "Private",
@@ -92,7 +127,7 @@ export const en = {
 
   // Version Footer
   viewingPreviousVersion: "You are viewing a previous version",
-  restoreVersionToEdit: "Restore this version to make edits",
+  restoreVersionToEdit: "Restore this version to edit",
   restoreThisVersion: "Restore this version",
   backToLatestVersion: "Back to latest version",
 
@@ -101,20 +136,17 @@ export const en = {
   share: "Share",
   delete: "Delete",
 
-  // Models
-  gemini15Pro: "Gemini 1.5 Pro",
-  gemini15Flash: "Gemini 1.5 Flash",
-
-  // Other
-  light: "Light",
-  dark: "Dark",
-  system: "System",
-  english: "English",
-  spanish: "Spanish",
-  french: "French",
-  japanese: "日本語",
-  signOut: "Sign out",
-  loginToYourAccount: "Login to your account",
+  // Sidebar History
+  today: "Today",
+  yesterday: "Yesterday",
+  last7Days: "Last 7 days",
+  last30Days: "Last 30 days",
+  olderThanLastMonth: "Older than last month",
+  loginToSave: "Login to save and review previous chats!",
+  conversationsWillAppear:
+    "Your conversations will appear here once you start chatting!",
+  reachedEndOfHistory: "You've reached the end of your chat history.",
+  loadingChats: "Loading Chats...",
 
   // Alerts
   activateAIGateway: "Activate AI Gateway",
@@ -126,10 +158,12 @@ export const en = {
   suggestedAction1: "What are the advantages of using Next.js?",
   suggestedAction2: "Write code to demonstrate Dijkstra's algorithm",
   suggestedAction3: "Help me write an essay about Silicon Valley",
-  suggestedAction4: "What is the weather in San Francisco?",
+  suggestedAction4: "What's the weather in San Francisco?",
 
   // App
   chatbotTitle: "Chatbot",
+  greetingTitle: "Hello there!",
+  greetingSubtitle: "How can I help you today?",
 
   // Sidebar
   deleteAllChats: "Delete all chats?",
@@ -137,8 +171,13 @@ export const en = {
     "This action cannot be undone. This will permanently delete all your chats and remove them from our servers.",
   deleteAll: "Delete All",
 
+  // Loading
+  loadingAuthStatus: "Loading auth status",
+  toggleSidebar: "Toggle Sidebar",
+
   // Toasts
-  checkingAuthStatus: "Checking authentication status, please try again!",
+  checkingAuthStatus:
+    "Checking authentication status, please try again!",
 
   // Chat Messages
   thinking: "Thinking...",
@@ -148,36 +187,24 @@ export const en = {
   suggestionNo: "No",
   suggestionMoreDetails: "Can you provide more details?",
   suggestionThankYou: "Thank you",
-  suggestionSoundsGood: "That sounds good",
+  suggestionSoundsGood: "Sounds good",
   suggestionMaybeLater: "Maybe later",
   suggestionTellMeMore: "Tell me more",
-  suggestionUnderstood: "I understood",
-  suggestionCanYouExplain: "Can you explain that?",
+  suggestionUnderstood: "Understood",
+  suggestionCanYouExplain: "Can you explain?",
   suggestionGiveExample: "Can you give an example?",
   suggestionGotIt: "Got it",
 
-  // Sidebar History
-  today: "Today",
-  yesterday: "Yesterday",
-  last7Days: "Last 7 days",
-  last30Days: "Last 30 days",
-  olderThanLastMonth: "Older than last month",
-  loginToSave: "Login to save and revisit previous chats!",
-  conversationsWillAppear:
-    "Your conversations will appear here once you start chatting!",
-  reachedEndOfHistory: "You have reached the end of your chat history.",
-  loadingChats: "Loading Chats...",
-  areYouAbsolutelySure: "Are you absolutely sure?",
-  deleteChatDescription:
-    "This action cannot be undone. This will permanently delete your chat and remove it from our servers.",
-  continue: "Continue",
+  // Common
+  cancel: "Cancel",
 
   // Error messages
   aiOverloaded:
     "The AI model is currently overloaded. Please try again in a few moments.",
   rateLimitExceeded:
     "Rate limit exceeded. Please wait a moment before trying again.",
-  unexpectedError: "An unexpected error occurred. Please try again.",
+  unexpectedError:
+    "An unexpected error occurred. Please try again.",
   somethingWrong: "Something went wrong. Please try again later.",
 
   // Tools
@@ -190,8 +217,22 @@ export const en = {
   toolSuggestions: "Get Suggestions",
   toolSuggestionsDesc: "Get AI suggestions",
 
-  // Dialog
+  // Tool Input
   toolInputLabel: "Input",
-  toolExecuteButton: "Execute Tool",
-  tools: "Tools",
+  toolExecuteButton: "Execute",
+
+  // Weather
+  hourlyForecast: "Hourly Forecast",
+  now: "Now",
+  sunrise: "Sunrise",
+  sunset: "Sunset",
+  high: "H",
+  low: "L",
+
+  // Tool Input Placeholders
+  weatherPlaceholder: "Enter city name (e.g., Tokyo, New York)",
+  createDocumentPlaceholder: "Enter document title",
+  updateDocumentPlaceholder: "Enter document ID and content",
+  requestSuggestionsPlaceholder: "Describe what you need suggestions for",
+  defaultToolPlaceholder: "Enter your request",
 };

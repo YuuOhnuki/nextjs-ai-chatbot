@@ -42,7 +42,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   <div className="flex flex-row gap-2">
                     <div className="size-6 animate-pulse rounded-full bg-zinc-500/30" />
                     <span className="animate-pulse rounded-md bg-zinc-500/30 text-transparent">
-                      Loading auth status
+                      {t("loadingAuthStatus")}
                     </span>
                   </div>
                   <div className="animate-spin text-zinc-500">

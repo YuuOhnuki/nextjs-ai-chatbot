@@ -1,4 +1,4 @@
-export const DEFAULT_CHAT_MODEL: string = "chat-model";
+export const DEFAULT_CHAT_MODEL: string = "chat-model-reasoning";
 
 export type ChatModel = {
   id: string;
@@ -9,12 +9,12 @@ export type ChatModel = {
 export const chatModels: ChatModel[] = [
   {
     id: "chat-model",
-    nameKey: "gemini15Pro",
+    nameKey: "gemini25Pro",
     description: "modelDescriptionAdvanced",
   },
   {
     id: "chat-model-reasoning",
-    nameKey: "gemini15Flash",
+    nameKey: "gemini25Flash",
     description: "modelDescriptionFast",
   },
 ];

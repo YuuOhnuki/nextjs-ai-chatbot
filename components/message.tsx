@@ -26,7 +26,7 @@ import { MessageReasoning } from "./message-reasoning";
 import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 
-const PurePreviewMessage = ({
+export const PurePreviewMessage = ({
   chatId,
   message,
   vote,
@@ -46,6 +46,21 @@ const PurePreviewMessage = ({
   requiresScrollPadding: boolean;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
+  const { t } = useTranslation();
+
+  // アクセントカラーを取得
+  const getAccentColor = () => {
+    const savedAccentColor = localStorage.getItem("accentColor") || "blue";
+    const accentColors = {
+      blue: "#006cff",
+      green: "#10b981",
+      purple: "#8b5cf6",
+      red: "#ef4444",
+      orange: "#f97316",
+      pink: "#ec4899",
+    };
+    return accentColors[savedAccentColor as keyof typeof accentColors] || "#006cff";
+  };
 
   const attachmentsFromMessage = message.parts.filter(
     (part) => part.type === "file"
@@ -123,22 +138,61 @@ const PurePreviewMessage = ({
               if (mode === "view") {
                 return (
                   <div key={key}>
-                    <MessageContent
-                      className={cn({
-                        "w-fit break-words rounded-2xl px-3 py-2 text-right text-white":
-                          message.role === "user",
-                        "bg-transparent px-0 py-0 text-left":
-                          message.role === "assistant",
-                      })}
-                      data-testid="message-content"
-                      style={
-                        message.role === "user"
-                          ? { backgroundColor: "#006cff" }
-                          : undefined
-                      }
-                    >
-                      <Response>{sanitizeText(part.text)}</Response>
-                    </MessageContent>
+                    {isLoading && message.role === "assistant" ? (
+                      <div className="flex w-full flex-col gap-2 md:gap-4">
+                        <div className="flex items-center gap-2">
+                          <div className="flex space-x-1">
+                            <motion.div
+                              animate={{ scale: [1, 1.2, 1] }}
+                              className="size-2 rounded-full bg-primary/60"
+                              transition={{
+                                duration: 1.5,
+                                repeat: Number.POSITIVE_INFINITY,
+                                delay: 0,
+                              }}
+                            />
+                            <motion.div
+                              animate={{ scale: [1, 1.2, 1] }}
+                              className="size-2 rounded-full bg-primary/60"
+                              transition={{
+                                duration: 1.5,
+                                repeat: Number.POSITIVE_INFINITY,
+                                delay: 0.2,
+                              }}
+                            />
+                            <motion.div
+                              animate={{ scale: [1, 1.2, 1] }}
+                              className="size-2 rounded-full bg-primary/60"
+                              transition={{
+                                duration: 1.5,
+                                repeat: Number.POSITIVE_INFINITY,
+                                delay: 0.4,
+                              }}
+                            />
+                          </div>
+                          <span className="text-muted-foreground text-sm">
+                            {t("thinking")}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <MessageContent
+                        className={cn({
+                          "w-fit break-words rounded-2xl px-3 py-2 text-right text-white":
+                            message.role === "user",
+                          "bg-transparent px-0 py-0 text-left":
+                            message.role === "assistant",
+                        })}
+                        data-testid="message-content"
+                        style={
+                          message.role === "user"
+                            ? { backgroundColor: getAccentColor() }
+                            : undefined
+                        }
+                      >
+                        <Response>{sanitizeText(part.text)}</Response>
+                      </MessageContent>
+                    )}
                   </div>
                 );
               }

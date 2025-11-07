@@ -2,7 +2,7 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
 import { AnimatePresence } from "framer-motion";
 import { ArrowDownIcon } from "lucide-react";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { useMessages } from "@/hooks/use-messages";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
@@ -10,6 +10,9 @@ import { useDataStream } from "./data-stream-provider";
 import { Conversation, ConversationContent } from "./elements/conversation";
 import { Greeting } from "./greeting";
 import { PreviewMessage, ThinkingMessage } from "./message";
+import { SuggestedActions } from "./suggested-actions";
+import { DynamicSuggestedActions } from "./dynamic-suggested-actions";
+import type { VisibilityType } from "./visibility-selector";
 
 type MessagesProps = {
   chatId: string;
@@ -20,6 +23,8 @@ type MessagesProps = {
   regenerate: UseChatHelpers<ChatMessage>["regenerate"];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
+  selectedVisibilityType: VisibilityType;
 };
 
 function PureMessages({
@@ -30,7 +35,12 @@ function PureMessages({
   setMessages,
   regenerate,
   isReadonly,
+  isArtifactVisible,
+  sendMessage,
+  selectedVisibilityType,
 }: MessagesProps) {
+  const [scrollInfo, setScrollInfo] = useState<{ isAtBottom: boolean; scrollToBottom: (behavior?: ScrollBehavior) => void } | null>(null);
+
   const {
     containerRef: messagesContainerRef,
     endRef: messagesEndRef,
@@ -40,6 +50,10 @@ function PureMessages({
   } = useMessages({
     status,
   });
+
+  useEffect(() => {
+    setScrollInfo({ isAtBottom, scrollToBottom });
+  }, [isAtBottom, scrollToBottom]);
 
   useDataStream();
 
@@ -71,7 +85,10 @@ function PureMessages({
             <PreviewMessage
               chatId={chatId}
               isLoading={
-                status === "streaming" && messages.length - 1 === index
+                status === "streaming" &&
+                messages.length - 1 === index &&
+                message.role === "assistant" &&
+                !message.parts.some(part => part.type === "text" && part.text?.trim())
               }
               isReadonly={isReadonly}
               key={message.id}
@@ -95,23 +112,23 @@ function PureMessages({
             )}
           </AnimatePresence>
 
+          {scrollInfo && !scrollInfo.isAtBottom && (
+            <button
+              aria-label="Scroll to bottom"
+              className="-translate-x-1/2 absolute bottom-20 left-1/2 z-10 rounded-full border bg-background p-2 shadow-lg transition-colors hover:bg-muted"
+              onClick={() => scrollInfo.scrollToBottom("smooth")}
+              type="button"
+            >
+              <ArrowDownIcon className="size-4" />
+            </button>
+          )}
+
           <div
             className="min-h-[24px] min-w-[24px] shrink-0"
             ref={messagesEndRef}
           />
         </ConversationContent>
       </Conversation>
-
-      {!isAtBottom && (
-        <button
-          aria-label="Scroll to bottom"
-          className="-translate-x-1/2 absolute bottom-40 left-1/2 z-10 rounded-full border bg-background p-2 shadow-lg transition-colors hover:bg-muted"
-          onClick={() => scrollToBottom("smooth")}
-          type="button"
-        >
-          <ArrowDownIcon className="size-4" />
-        </button>
-      )}
     </div>
   );
 }
