@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/hooks/use-translation";
 import { type ToolMetadata, toolMetadata } from "@/lib/tools-metadata";
 
 export function ToolApps({

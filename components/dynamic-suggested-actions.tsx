@@ -3,7 +3,7 @@
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/hooks/use-translation";
 import type { ChatMessage } from "@/lib/types";
 import { Suggestion } from "./elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
@@ -95,7 +95,7 @@ function PureDynamicSuggestedActions({
       return [];
     }
 
-    const lastMessage = messages.at(-1);
+    const lastMessage = messages[messages.length - 1];
     if (lastMessage.role !== "assistant") {
       return [];
     }

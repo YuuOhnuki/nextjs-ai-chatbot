@@ -24,12 +24,8 @@ export default async function Page() {
         <Chat
           autoResume={false}
           id={id}
-          initialChatModel={DEFAULT_CHAT_MODEL}
           initialMessages={[]}
-          initialVisibilityType="private"
           isReadonly={false}
-          key={id}
-          session={session}
         />
         <DataStreamHandler />
       </>
@@ -41,12 +37,8 @@ export default async function Page() {
       <Chat
         autoResume={false}
         id={id}
-        initialChatModel={modelIdFromCookie.value}
         initialMessages={[]}
-        initialVisibilityType="private"
         isReadonly={false}
-        key={id}
-        session={session}
       />
       <DataStreamHandler />
     </>

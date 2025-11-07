@@ -4,7 +4,7 @@ import equal from "fast-deep-equal";
 import { motion } from "framer-motion";
 import { BrainIcon } from "lucide-react";
 import { memo, useState } from "react";
-import { useTranslation } from "@/hooks/useTranslation";
+import { useTranslation } from "@/hooks/use-translation";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { cn, sanitizeText } from "@/lib/utils";

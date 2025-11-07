@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { LanguageProvider } from "@/hooks/useTranslation";
+import { LanguageProvider } from "@/hooks/use-translation";
 
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";

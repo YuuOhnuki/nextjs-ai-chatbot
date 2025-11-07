@@ -124,9 +124,6 @@ export const Messages = memo(PureMessages, (prevProps, nextProps) => {
   if (prevProps.status !== nextProps.status) {
     return false;
   }
-  if (prevProps.selectedModelId !== nextProps.selectedModelId) {
-    return false;
-  }
   if (prevProps.messages.length !== nextProps.messages.length) {
     return false;
   }
