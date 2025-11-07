@@ -584,6 +584,24 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
   }
 }
 
+export async function createStreamId({
+  streamId,
+  chatId,
+}: {
+  streamId: string;
+  chatId: string;
+}) {
+  try {
+    return await db.insert(stream).values({
+      id: streamId,
+      chatId,
+      createdAt: new Date(),
+    });
+  } catch (_error) {
+    throw new ChatSDKError("bad_request:database", "Failed to create stream id");
+  }
+}
+
 export async function deleteUser(userId: string) {
   try {
     // Delete votes first
