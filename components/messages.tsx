@@ -1,9 +1,11 @@
+"use client";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
 import { AnimatePresence } from "framer-motion";
 import { ArrowDownIcon } from "lucide-react";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useMessages } from "@/hooks/use-messages";
+import { useChatMessages } from "@/hooks/use-chat-messages";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
 import { useDataStream } from "./data-stream-provider";
@@ -47,13 +49,27 @@ function PureMessages({
     isAtBottom,
     scrollToBottom,
     hasSentMessage,
+    hasFirstCharacter,
   } = useMessages({
     status,
+    messages,
   });
 
+  const { messages: chatMessages, votes: chatVotes } = useChatMessages({
+    chatId,
+    initialMessages: messages,
+  });
+
+  const memoizedMessages = useMemo(() => chatMessages, [chatMessages]);
+  const memoizedVotes = useMemo(() => chatVotes || votes, [chatVotes, votes]);
+
+  const handleScrollToBottom = useCallback((behavior?: ScrollBehavior) => {
+    scrollToBottom(behavior);
+  }, [scrollToBottom]);
+
   useEffect(() => {
-    setScrollInfo({ isAtBottom, scrollToBottom });
-  }, [isAtBottom, scrollToBottom]);
+    setScrollInfo({ isAtBottom, scrollToBottom: handleScrollToBottom });
+  }, [isAtBottom, handleScrollToBottom]);
 
   useDataStream();
 
@@ -71,6 +87,35 @@ function PureMessages({
     }
   }, [status, messagesContainerRef]);
 
+  const shouldShowThinking = useMemo(() => {
+    return status === "submitted" && 
+           (messages.length === 0 || messages[messages.length - 1]?.role === 'user') &&
+           !hasFirstCharacter;
+  }, [status, messages, hasFirstCharacter]);
+
+  const renderMessage = useCallback((message: ChatMessage, index: number) => {
+    const isLoading = status === "streaming" &&
+                    messages.length - 1 === index &&
+                    message.role === "assistant" &&
+                    !message.parts.some(part => part.type === "text" && part.text?.trim());
+    
+    const vote = memoizedVotes.find((vote) => vote.messageId === message.id);
+    
+    return (
+      <PreviewMessage
+        chatId={chatId}
+        isLoading={isLoading}
+        isReadonly={isReadonly}
+        key={message.id}
+        message={message}
+        regenerate={regenerate}
+        requiresScrollPadding={hasSentMessage && index === messages.length - 1}
+        setMessages={setMessages}
+        vote={vote}
+      />
+    );
+  }, [chatId, status, messages, memoizedVotes, isReadonly, regenerate, hasSentMessage, setMessages]);
+
   return (
     <div
       className="overscroll-behavior-contain -webkit-overflow-scrolling-touch flex-1 touch-pan-y overflow-y-scroll"
@@ -81,35 +126,10 @@ function PureMessages({
         <ConversationContent className="flex flex-col gap-4 px-2 py-4 md:gap-6 md:px-4">
           {messages.length === 0 && <Greeting />}
 
-          {messages.map((message, index) => (
-            <PreviewMessage
-              chatId={chatId}
-              isLoading={
-                status === "streaming" &&
-                messages.length - 1 === index &&
-                message.role === "assistant" &&
-                !message.parts.some(part => part.type === "text" && part.text?.trim())
-              }
-              isReadonly={isReadonly}
-              key={message.id}
-              message={message}
-              regenerate={regenerate}
-              requiresScrollPadding={
-                hasSentMessage && index === messages.length - 1
-              }
-              setMessages={setMessages}
-              vote={
-                votes
-                  ? votes.find((vote) => vote.messageId === message.id)
-                  : undefined
-              }
-            />
-          ))}
+          {memoizedMessages.map(renderMessage)}
 
           <AnimatePresence mode="wait">
-            {status === "submitted" && messages.length === 0 && (
-              <ThinkingMessage key="thinking" />
-            )}
+            {shouldShowThinking && <ThinkingMessage key="thinking" />}
           </AnimatePresence>
 
           {scrollInfo && !scrollInfo.isAtBottom && (

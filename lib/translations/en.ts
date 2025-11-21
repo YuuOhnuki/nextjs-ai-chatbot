@@ -38,6 +38,34 @@ export const en = {
   memoryDescription: "This memory will be applied to all your conversations.",
   saveSettings: "Save Settings",
 
+  // Agent Progress
+  agentExecution: "Agent Execution",
+  executing: "Executing",
+  currentlyExecuting: "Currently Executing",
+  taskList: "Task List",
+  activityLog: "Activity Log",
+  agentStarted: "Agent started",
+  taskCompleted: "Task completed",
+  estimatedTime: "Estimated time",
+  minutes: "minutes",
+  complete: "complete",
+  total: "total",
+
+  // Chat Options
+  chatOptions: "Chat Options",
+  enableFeatures: "Enable Features",
+  webSearch: "Web Search",
+  webSearchDescription: "Get latest information from the internet",
+  agentSystem: "Agent System",
+  agentSystemDescription: "Enable autonomous task execution",
+  currentStatus: "Current Status",
+  noFeaturesEnabled: "No features enabled",
+  quickActions: "Quick Actions",
+  enableAll: "Enable All",
+  disableAll: "Disable All",
+  agent: "Agent",
+  web: "Web",
+
   // General
   general: "General",
   notifications: "Notifications",
@@ -155,10 +183,10 @@ export const en = {
   activate: "Activate",
 
   // Suggested Actions
-  suggestedAction1: "What are the advantages of using Next.js?",
-  suggestedAction2: "Write code to demonstrate Dijkstra's algorithm",
-  suggestedAction3: "Help me write an essay about Silicon Valley",
-  suggestedAction4: "What's the weather in San Francisco?",
+  suggestedAction1: "Tell me about featured news",
+  suggestedAction2: "Recommend a good movie",
+  suggestedAction3: "Give me health and wellness tips",
+  suggestedAction4: "Suggest travel destinations",
 
   // App
   chatbotTitle: "Chatbot",

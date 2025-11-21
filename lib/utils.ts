@@ -28,23 +28,43 @@ export const fetcher = async (url: string) => {
 
 export async function fetchWithErrorHandlers(
   input: RequestInfo | URL,
-  init?: RequestInit,
+  init?: RequestInit & {
+    validateResponse?: boolean;
+  },
 ) {
   try {
-    const response = await fetch(input, init);
+    const response = await fetch(input, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...init?.headers,
+      },
+    });
 
     if (!response.ok) {
-      const { code, cause } = await response.json();
-      throw new ChatSDKError(code as ErrorCode, cause);
+      const errorData = await response.json().catch(() => ({ code: 'unknown_error', cause: 'Unknown error' }));
+      throw new ChatSDKError(errorData.code as ErrorCode, errorData.cause);
+    }
+
+    if (init?.validateResponse) {
+      const clonedResponse = response.clone();
+      const data = await clonedResponse.json().catch(() => null);
+      if (!data || typeof data !== 'object') {
+        throw new ChatSDKError('bad_request:api', 'Invalid response format');
+      }
     }
 
     return response;
   } catch (error: unknown) {
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new ChatSDKError('offline:chat');
+      throw new ChatSDKError('offline:chat', 'No internet connection');
     }
 
-    throw error;
+    if (error instanceof ChatSDKError) {
+      throw error;
+    }
+
+    throw new ChatSDKError('offline:chat', 'Network request failed');
   }
 }
 
@@ -93,8 +113,44 @@ export function getTrailingMessageId({
   return trailingMessage.id;
 }
 
-export function sanitizeText(text: string) {
-  return text.replace('<has_function_call>', '');
+// import DOMPurify from 'isomorphic-dompurify';
+// Temporarily commented out until package is installed
+// TODO: Run `npm install` to install isomorphic-dompurify
+
+// Basic HTML sanitization function (temporary fallback)
+function basicSanitize(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+    .replace(/<[^>]*>/g, '') // Remove all HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .trim();
+}
+
+export function sanitizeText(text: string): string {
+  // TODO: Replace with DOMPurify after npm install
+  // return DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  return basicSanitize(text);
+}
+
+export function sanitizeHtml(text: string): string {
+  // TODO: Replace with DOMPurify after npm install
+  // return DOMPurify.sanitize(text, {
+  //   ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'code', 'pre'],
+  //   ALLOWED_ATTR: ['href', 'target', 'rel'],
+  // });
+  
+  // Basic HTML sanitization (temporary fallback)
+  if (!text) return '';
+  return text
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '') // Remove iframes
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '') // Remove objects
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '') // Remove embeds
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .trim();
 }
 
 export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {

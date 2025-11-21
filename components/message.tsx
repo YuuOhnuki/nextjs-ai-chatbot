@@ -1,18 +1,20 @@
 "use client";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import equal from "fast-deep-equal";
-import { motion } from "framer-motion";
-import { BrainIcon } from "lucide-react";
 import { memo, useState } from "react";
-import { useTranslation } from "@/hooks/use-translation";
+import { motion } from "framer-motion";
 import type { Vote } from "@/lib/db/schema";
 import type { ChatMessage } from "@/lib/types";
-import { cn, sanitizeText } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/use-translation";
 import { useDataStream } from "./data-stream-provider";
 import { DocumentToolResult } from "./document";
 import { DocumentPreview } from "./document-preview";
-import { MessageContent } from "./elements/message";
-import { Response } from "./elements/response";
+import { MessageContent } from "./message/message-content";
+import { MessageAttachments } from "./message/message-attachments";
+import { MessageActions } from "./message-actions";
+import { MessageEditor } from "./message-editor";
+import { MessageReasoning } from "./message-reasoning";
 import {
   Tool,
   ToolContent,
@@ -20,10 +22,6 @@ import {
   ToolInput,
   ToolOutput,
 } from "./elements/tool";
-import { MessageActions } from "./message-actions";
-import { MessageEditor } from "./message-editor";
-import { MessageReasoning } from "./message-reasoning";
-import { PreviewAttachment } from "./preview-attachment";
 import { Weather } from "./weather";
 
 export const PurePreviewMessage = ({
@@ -46,35 +44,14 @@ export const PurePreviewMessage = ({
   requiresScrollPadding: boolean;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
-  const { t } = useTranslation();
-
-  // アクセントカラーを取得
-  const getAccentColor = () => {
-    const savedAccentColor = localStorage.getItem("accentColor") || "blue";
-    const accentColors = {
-      blue: "#006cff",
-      green: "#10b981",
-      purple: "#8b5cf6",
-      red: "#ef4444",
-      orange: "#f97316",
-      pink: "#ec4899",
-    };
-    return accentColors[savedAccentColor as keyof typeof accentColors] || "#006cff";
-  };
-
-  const attachmentsFromMessage = message.parts.filter(
-    (part) => part.type === "file"
-  );
 
   useDataStream();
 
   return (
-    <motion.div
-      animate={{ opacity: 1 }}
+    <div
       className="group/message w-full"
       data-role={message.role}
       data-testid={`message-${message.role}`}
-      initial={{ opacity: 0 }}
     >
       <div
         className={cn("flex w-full items-start gap-2 md:gap-3", {
@@ -82,10 +59,7 @@ export const PurePreviewMessage = ({
           "justify-start": message.role === "assistant",
         })}
       >
-        {message.role === "assistant" && null}
-
-        {message.role === "user" && null}
-
+        
         <div
           className={cn("flex flex-col", {
             "gap-2 md:gap-4": message.parts?.some(
@@ -102,23 +76,7 @@ export const PurePreviewMessage = ({
               message.role === "user" && mode !== "edit",
           })}
         >
-          {attachmentsFromMessage.length > 0 && (
-            <div
-              className="flex flex-row justify-end gap-2"
-              data-testid={"message-attachments"}
-            >
-              {attachmentsFromMessage.map((attachment) => (
-                <PreviewAttachment
-                  attachment={{
-                    name: attachment.filename ?? "file",
-                    contentType: attachment.mediaType,
-                    url: attachment.url,
-                  }}
-                  key={attachment.url}
-                />
-              ))}
-            </div>
-          )}
+          <MessageAttachments message={message} />
 
           {message.parts?.map((part, index) => {
             const { type } = part;
@@ -137,83 +95,23 @@ export const PurePreviewMessage = ({
             if (type === "text") {
               if (mode === "view") {
                 return (
-                  <div key={key}>
-                    {isLoading && message.role === "assistant" ? (
-                      <div className="flex w-full flex-col gap-2 md:gap-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex space-x-1">
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              className="size-2 rounded-full bg-primary/60"
-                              transition={{
-                                duration: 1.5,
-                                repeat: Number.POSITIVE_INFINITY,
-                                delay: 0,
-                              }}
-                            />
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              className="size-2 rounded-full bg-primary/60"
-                              transition={{
-                                duration: 1.5,
-                                repeat: Number.POSITIVE_INFINITY,
-                                delay: 0.2,
-                              }}
-                            />
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              className="size-2 rounded-full bg-primary/60"
-                              transition={{
-                                duration: 1.5,
-                                repeat: Number.POSITIVE_INFINITY,
-                                delay: 0.4,
-                              }}
-                            />
-                          </div>
-                          <span className="text-muted-foreground text-sm">
-                            {t("thinking")}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      <MessageContent
-                        className={cn({
-                          "w-fit break-words rounded-2xl px-3 py-2 text-right text-white":
-                            message.role === "user",
-                          "bg-transparent px-0 py-0 text-left":
-                            message.role === "assistant",
-                        })}
-                        data-testid="message-content"
-                        style={
-                          message.role === "user"
-                            ? { backgroundColor: getAccentColor() }
-                            : undefined
-                        }
-                      >
-                        <Response>{sanitizeText(part.text)}</Response>
-                      </MessageContent>
-                    )}
-                  </div>
+                  <MessageContent
+                    key={key}
+                    message={message}
+                    isLoading={isLoading}
+                  />
                 );
               }
 
               if (mode === "edit") {
                 return (
-                  <div
-                    className="flex w-full flex-row items-start gap-3"
+                  <MessageEditor
                     key={key}
-                  >
-                    <div className="size-8" />
-                    <div className="min-w-0 flex-1">
-                      <MessageEditor
-                        key={message.id}
-                        message={message}
-                        regenerate={regenerate}
-                        setMessages={setMessages}
-                        setMode={setMode}
-                      />
-                    </div>
-                  </div>
+                    message={message}
+                    setMode={setMode}
+                    setMessages={setMessages}
+                    regenerate={regenerate}
+                  />
                 );
               }
             }
@@ -326,16 +224,15 @@ export const PurePreviewMessage = ({
           {!isReadonly && (
             <MessageActions
               chatId={chatId}
-              isLoading={isLoading}
-              key={`action-${message.id}`}
               message={message}
-              setMode={setMode}
               vote={vote}
+              isLoading={isLoading}
+              setMode={setMode}
             />
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -377,9 +274,6 @@ export const ThinkingMessage = () => {
       transition={{ duration: 0.2 }}
     >
       <div className="flex items-start justify-start gap-3">
-        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border bg-primary text-primary-foreground">
-          <BrainIcon className="size-4" />
-        </div>
 
         <div className="flex w-full flex-col gap-2 md:gap-4">
           <div className="flex items-center gap-2">
@@ -416,12 +310,6 @@ export const ThinkingMessage = () => {
               {t("thinking")}
             </span>
           </div>
-
-          <motion.div
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            className="h-4 w-32 animate-pulse rounded bg-muted"
-            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-          />
         </div>
       </div>
     </motion.div>

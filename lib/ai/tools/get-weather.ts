@@ -31,7 +31,7 @@ async function geocodeCity(
 
 export const getWeather = tool({
   description:
-    "Get the current weather at a location. You can provide either coordinates or a city name.",
+    "Get the current weather at a location. You can provide either coordinates or a city name. Provides real-time weather data with automatic updates.",
   inputSchema: z.object({
     latitude: z.number().optional(),
     longitude: z.number().optional(),
@@ -39,6 +39,10 @@ export const getWeather = tool({
       .string()
       .describe("City name (e.g., 'San Francisco', 'New York', 'London')")
       .optional(),
+    realtime: z
+      .boolean()
+      .describe("Whether to fetch real-time weather data")
+      .default(true),
   }),
   execute: async (input) => {
     let latitude: number;
@@ -63,8 +67,18 @@ export const getWeather = tool({
       };
     }
 
+    const weatherParams = new URLSearchParams({
+      latitude: latitude.toString(),
+      longitude: longitude.toString(),
+      current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,wind_direction_10m",
+      hourly: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,weather_code,wind_speed_10m",
+      daily: "sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min",
+      timezone: "auto",
+      forecast_days: input.realtime ? "1" : "7"
+    });
+
     const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`
+      `https://api.open-meteo.com/v1/forecast?${weatherParams.toString()}`
     );
 
     const weatherData = await response.json();

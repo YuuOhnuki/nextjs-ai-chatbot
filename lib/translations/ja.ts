@@ -38,6 +38,34 @@ export const ja = {
   memoryDescription: "このメモリはすべての会話に適用されます。",
   saveSettings: "設定を保存",
 
+  // Agent Progress
+  agentExecution: "エージェント実行中",
+  executing: "実行中",
+  currentlyExecuting: "現在実行中",
+  taskList: "タスクリスト",
+  activityLog: "アクティビティログ",
+  agentStarted: "エージェントを開始しました",
+  taskCompleted: "タスク完了",
+  estimatedTime: "推定時間",
+  minutes: "分",
+  complete: "完了",
+  total: "合計",
+
+  // Chat Options
+  chatOptions: "チャットオプション",
+  enableFeatures: "機能を有効にする",
+  webSearch: "Web検索",
+  webSearchDescription: "インターネットから最新情報を取得",
+  agentSystem: "エージェントシステム",
+  agentSystemDescription: "自律的なタスク実行を有効にする",
+  currentStatus: "現在のステータス",
+  noFeaturesEnabled: "機能が有効ではありません",
+  quickActions: "クイックアクション",
+  enableAll: "すべて有効にする",
+  disableAll: "すべて無効にする",
+  agent: "エージェント",
+  web: "Web",
+
   // General
   general: "一般",
   notifications: "通知",
@@ -159,10 +187,10 @@ export const ja = {
   activate: "有効化",
 
   // Suggested Actions
-  suggestedAction1: "Next.jsを使用する利点は何ですか？",
-  suggestedAction2: "ダイクストラアルゴリズムを示すコードを書く",
-  suggestedAction3: "シリコンバレーについてのエッセイを書くのを手伝って",
-  suggestedAction4: "サンフランシスコの天気は？",
+  suggestedAction1: "注目のニュースについて教えて",
+  suggestedAction2: "おすすめの映画を教えて",
+  suggestedAction3: "健康についてのアドバイスをください",
+  suggestedAction4: "旅行のおすすめ場所を教えて",
 
   // App
   chatbotTitle: "チャットボット",

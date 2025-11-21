@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useArtifactSelector } from "@/hooks/use-artifact";
 import { useAutoResume } from "@/hooks/use-auto-resume";
+import { useAgentProgress } from "@/hooks/use-agent-progress";
 import { useTranslation } from "@/hooks/use-translation";
 import { DEFAULT_CHAT_MODEL } from "@/lib/ai/models";
 import type { Vote } from "@/lib/db/schema";
@@ -29,6 +30,7 @@ import type { Attachment, ChatMessage } from "@/lib/types";
 import type { AppUsage } from "@/lib/usage";
 import { fetcher, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { Artifact } from "./artifact";
+import { AgentProgress } from "./agent-progress";
 import { useDataStream } from "./data-stream-provider";
 import { Messages } from "./messages";
 import { MultimodalInput } from "./multimodal-input";
@@ -60,6 +62,19 @@ export function Chat({
   const [showCreditCardAlert, setShowCreditCardAlert] = useState(false);
   const [selectedTool, setSelectedTool] = useState<ToolMetadata | null>(null);
   const [toolDialogOpen, setToolDialogOpen] = useState(false);
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
+  const [agentEnabled, setAgentEnabled] = useState(false);
+  
+  const { 
+    activeAgent, 
+    showAgentProgress, 
+    isExecuting,
+    startAgent, 
+    stopAgent, 
+    pauseAgent, 
+    resumeAgent 
+  } = useAgentProgress();
+  
   const currentModelId = DEFAULT_CHAT_MODEL;
 
   const { t } = useTranslation();
@@ -87,6 +102,8 @@ export function Chat({
             message: request.messages.at(-1),
             selectedChatModel: currentModelId,
             selectedVisibilityType: "private",
+            webSearchEnabled,
+            agentEnabled,
             ...request.body,
           },
         };
@@ -95,8 +112,11 @@ export function Chat({
     onData: (dataPart) => {
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
       if (dataPart.type === "data-usage") {
-        setUsage(dataPart.data);
+        setUsage(dataPart.data as AppUsage);
       }
+      
+      // Note: Agent data streams would be handled differently in a real implementation
+      // For now, agent execution is handled directly through the useAgentProgress hook
     },
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
@@ -208,6 +228,33 @@ export function Chat({
     });
   };
 
+  const handleSendMessage = async (message: string) => {
+    // Check if agent should be triggered
+    if (agentEnabled && !isExecuting) {
+      // Detect if this is a complex task that would benefit from agent execution
+      const agentTriggers = [
+        "計画", "作成", "調査", "分析", "まとめて", "プロジェクト", "タスク",
+        "plan", "create", "research", "analyze", "project", "task", "comprehensive"
+      ];
+      
+      const shouldTriggerAgent = agentTriggers.some(trigger => 
+        message.toLowerCase().includes(trigger.toLowerCase())
+      ) || message.length > 100; // Long messages might need agent assistance
+
+      if (shouldTriggerAgent) {
+        // Start agent execution
+        await startAgent(message, undefined, undefined, webSearchEnabled);
+        return;
+      }
+    }
+
+    // Send regular chat message
+    sendMessage({
+      role: "user" as const,
+      parts: [{ type: "text", text: message }],
+    });
+  };
+
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
@@ -227,6 +274,23 @@ export function Chat({
         open={toolDialogOpen}
         tool={selectedTool}
       />
+      
+      {/* Agent Progress Display */}
+      {showAgentProgress && activeAgent && (
+        <div className="border-b bg-background">
+          <div className="container mx-auto px-4 py-3">
+            <AgentProgress
+              agent={activeAgent}
+              onPause={pauseAgent}
+              onResume={resumeAgent}
+              onStop={stopAgent}
+              isExpanded={true}
+              onToggleExpanded={() => {/* Handle expand/collapse */}}
+            />
+          </div>
+        </div>
+      )}
+      
       <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
         <ChatHeader />
 
@@ -260,6 +324,11 @@ export function Chat({
               status={status}
               stop={stop}
               usage={usage}
+              webSearchEnabled={webSearchEnabled}
+              agentEnabled={agentEnabled}
+              onWebSearchToggle={setWebSearchEnabled}
+              onAgentToggle={setAgentEnabled}
+              onSendMessage={handleSendMessage}
             />
           )}
         </div>

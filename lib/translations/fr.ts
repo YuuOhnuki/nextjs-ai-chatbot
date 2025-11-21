@@ -126,10 +126,10 @@ export const fr = {
   activate: "Activer",
 
   // Suggested Actions
-  suggestedAction1: "Quels sont les avantages d'utiliser Next.js ?",
-  suggestedAction2: "Écrivez du code pour démontrer l'algorithme de Dijkstra",
-  suggestedAction3: "Aidez-moi à écrire un essai sur Silicon Valley",
-  suggestedAction4: "Quel temps fait-il à San Francisco ?",
+  suggestedAction1: "Parle-moi des actualités marquantes",
+  suggestedAction2: "Recommande-moi un bon film",
+  suggestedAction3: "Donne-moi des conseils santé et bien-être",
+  suggestedAction4: "Suggère des destinations de voyage",
 
   // App
   chatbotTitle: "Chatbot",

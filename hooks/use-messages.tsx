@@ -5,8 +5,10 @@ import { useScrollToBottom } from "./use-scroll-to-bottom";
 
 export function useMessages({
   status,
+  messages,
 }: {
   status: UseChatHelpers<ChatMessage>["status"];
+  messages: ChatMessage[];
 }) {
   const {
     containerRef,
@@ -18,12 +20,24 @@ export function useMessages({
   } = useScrollToBottom();
 
   const [hasSentMessage, setHasSentMessage] = useState(false);
+  const [hasFirstCharacter, setHasFirstCharacter] = useState(false);
 
   useEffect(() => {
     if (status === "submitted") {
       setHasSentMessage(true);
+      setHasFirstCharacter(false);
+    } else if (status === "streaming") {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.role === "assistant") {
+        const hasContent = lastMessage.parts.some(
+          part => part.type === "text" && part.text?.trim().length > 0
+        );
+        if (hasContent) {
+          setHasFirstCharacter(true);
+        }
+      }
     }
-  }, [status]);
+  }, [status, messages]);
 
   return {
     containerRef,
@@ -33,5 +47,6 @@ export function useMessages({
     onViewportEnter,
     onViewportLeave,
     hasSentMessage,
+    hasFirstCharacter,
   };
 }

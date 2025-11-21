@@ -45,6 +45,7 @@ import {
 import { PreviewAttachment } from "./preview-attachment";
 import { SuggestedActions } from "./suggested-actions";
 import { ToolApps } from "./tool-apps";
+import { ChatOptions } from "./chat-options";
 import { Button } from "./ui/button";
 import type { VisibilityType } from "./visibility-selector";
 
@@ -65,6 +66,11 @@ function PureMultimodalInput({
   onModelChange,
   usage,
   handleToolSelect,
+  webSearchEnabled = false,
+  agentEnabled = false,
+  onWebSearchToggle,
+  onAgentToggle,
+  onSendMessage,
 }: {
   chatId: string;
   input: string;
@@ -82,6 +88,11 @@ function PureMultimodalInput({
   onModelChange?: (modelId: string) => void;
   usage?: AppUsage;
   handleToolSelect: (tool: any) => void;
+  webSearchEnabled?: boolean;
+  agentEnabled?: boolean;
+  onWebSearchToggle?: (enabled: boolean) => void;
+  onAgentToggle?: (enabled: boolean) => void;
+  onSendMessage?: (message: string) => Promise<void>;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -133,44 +144,39 @@ function PureMultimodalInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<string[]>([]);
 
-  const submitForm = useCallback(() => {
+  const submitForm = useCallback(async () => {
     window.history.pushState({}, "", `/chat/${chatId}`);
+
+    if (onSendMessage) {
+      await onSendMessage(input);
+      setInput("");
+      return;
+    }
 
     sendMessage({
       role: "user",
       parts: [
-        ...attachments.map((attachment) => ({
-          type: "file" as const,
-          url: attachment.url,
-          name: attachment.name,
-          mediaType: attachment.contentType,
-        })),
         {
           type: "text",
           text: input,
         },
+        ...(attachments.length > 0
+          ? [
+              {
+                type: "file",
+                data: attachments,
+              } as any,
+            ]
+          : []),
       ],
     });
 
-    setAttachments([]);
-    setLocalStorageInput("");
-    resetHeight();
     setInput("");
-
-    if (width && width > 768) {
-      textareaRef.current?.focus();
+    setAttachments([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-  }, [
-    input,
-    setInput,
-    attachments,
-    sendMessage,
-    setAttachments,
-    setLocalStorageInput,
-    width,
-    chatId,
-    resetHeight,
-  ]);
+  }, [input, attachments, chatId, sendMessage, setInput, setAttachments, onSendMessage]);
 
   const uploadFile = useCallback(async (file: File) => {
     const formData = new FormData();
@@ -395,6 +401,12 @@ function PureMultimodalInput({
               status={status}
             />
             <ToolApps onToolSelect={handleToolSelect} />
+            <ChatOptions
+              webSearchEnabled={webSearchEnabled}
+              agentEnabled={agentEnabled}
+              onWebSearchToggle={onWebSearchToggle}
+              onAgentToggle={onAgentToggle}
+            />
             <ModelSelectorCompact
               onModelChange={onModelChange}
               selectedModelId={selectedModelId}
@@ -438,6 +450,21 @@ export const MultimodalInput = memo(
       return false;
     }
     if (prevProps.handleToolSelect !== nextProps.handleToolSelect) {
+      return false;
+    }
+    if (prevProps.webSearchEnabled !== nextProps.webSearchEnabled) {
+      return false;
+    }
+    if (prevProps.agentEnabled !== nextProps.agentEnabled) {
+      return false;
+    }
+    if (prevProps.onWebSearchToggle !== nextProps.onWebSearchToggle) {
+      return false;
+    }
+    if (prevProps.onAgentToggle !== nextProps.onAgentToggle) {
+      return false;
+    }
+    if (prevProps.onSendMessage !== nextProps.onSendMessage) {
       return false;
     }
 
